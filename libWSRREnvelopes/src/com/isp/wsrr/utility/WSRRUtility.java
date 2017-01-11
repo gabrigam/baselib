@@ -21,6 +21,8 @@ public class WSRRUtility {
 		// Initialize the config variables for processing from the command line
 
 		WSRRUtility wsrrutility=new WSRRUtility();
+		
+		//11012017 vedi note per 11012017_branch
 
 		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
 		String user = "gabriele";
@@ -2540,6 +2542,18 @@ public class WSRRUtility {
 				resultdata = "RTGEN";
 			if (resultdata.contains("#BC"))
 				resultdata = "BC";
+			//211216
+			if (resultdata.contains("#SOM"))
+				resultdata = "SOM";
+			if (resultdata.contains("#EP"))
+				resultdata = "EP";
+			if (resultdata.contains("#AGGR"))
+				resultdata = "AGGR";
+			//110117
+			if (resultdata.contains("#SHLIB"))
+				resultdata = "SHLIB";
+			if (resultdata.contains("#FNZCD"))
+				resultdata = "FNZCD";
 		}
 
 		return resultdata;
@@ -3341,12 +3355,15 @@ public class WSRRUtility {
 
 		String queryCICS = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23CICSServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
 		String queryMQ = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23MQServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
-
-
+		//110117
+		String queryCALLABLE = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23CALLABLEServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
+		
 		if (interfaceType.equals("REST")) query=queryREST;
 		if (interfaceType.equals("SOAP")) query=querySOAP;
 		if (interfaceType.equals("CICS")) query=queryCICS;
 		if (interfaceType.equals("MQ")) query=queryMQ;
+		//110117
+		if (interfaceType.equals("CALLABLE")) query=queryCALLABLE;
 
 
 		query = query.replaceAll("%CATALOGNAME%", name);
