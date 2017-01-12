@@ -370,7 +370,7 @@ public class WSRREnvelopes {
 			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.VERSION, "00"));
 			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.DESCRIPTION, ""));
 
-			//12017
+			//12017 allineati i campi al nuovo modello
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_DESC_ESTESA", EMPTY_STRING));
 			propertiesElement
 					.appendChild(createPropertyElement(document, "gep63_DOC_ANALISI_FUNZIONALE", EMPTY_STRING));
@@ -392,10 +392,11 @@ public class WSRREnvelopes {
             propertiesElement.appendChild(createPropertyElement(document, "gep63_PIATT_EROG", EMPTY_STRING));
             propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_RITIRO_SERV",EMPTY_STRING));
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_RICH_MODIFICA",EMPTY_STRING ));
-			
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_RICH_CREAZIONE",EMPTY_STRING ));
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_PUBBL_CREAZ_SERV", EMPTY_STRING));
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_PUBBLICATORE_CREAZ_SERV", EMPTY_STRING));
-
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_TIPOLOGIA", EMPTY_STRING));
+			
 			propertiesElement.appendChild(
 					createPropertyElement(document, PropertyConstants.PRIMARY_TYPE, OWL_BUSINESS_APPLICATION_VERSION));
 
