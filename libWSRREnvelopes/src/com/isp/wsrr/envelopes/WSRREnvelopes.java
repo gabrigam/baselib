@@ -369,6 +369,8 @@ public class WSRREnvelopes {
 			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.NAMESPACE, ""));
 			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.VERSION, "00"));
 			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.DESCRIPTION, ""));
+
+			//12017
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_DESC_ESTESA", EMPTY_STRING));
 			propertiesElement
 					.appendChild(createPropertyElement(document, "gep63_DOC_ANALISI_FUNZIONALE", EMPTY_STRING));
@@ -382,16 +384,17 @@ public class WSRREnvelopes {
 			
 			//capability version
             propertiesElement.appendChild(createPropertyElement(document, "gep63_ABILITAZ_INFRASTR",EMPTY_STRING));
-            propertiesElement.appendChild(createPropertyElement(document, "gep63_TIPO_SERVIZIO",EMPTY_STRING));
-            propertiesElement.appendChild(createPropertyElement(document, "gep63_UTILIZZO_X_PIU_CLONI", EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_FLG_CTRL_TIPOLOGIA",EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_UTILIZ_PIU_BAN_CLONI", EMPTY_STRING));
             propertiesElement.appendChild(createPropertyElement(document, "gep63_DISP_SERV", EMPTY_STRING));
             propertiesElement.appendChild(createPropertyElement(document, "gep63_VINCOLI_RIUSO", EMPTY_STRING));
             propertiesElement.appendChild(createPropertyElement(document, "gep63_INFO_COSTO", EMPTY_STRING));
-            propertiesElement.appendChild(createPropertyElement(document, "gep63_IMPL_PIATT_EROG", EMPTY_STRING));
-            propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_RITIRO",EMPTY_STRING ));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_PIATT_EROG", EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_RITIRO_SERV",EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_RICH_MODIFICA",EMPTY_STRING ));
 			
-			propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_PUBBLICAZIONE", EMPTY_STRING));
-			propertiesElement.appendChild(createPropertyElement(document, "gep63_PUBBLICATORE_SERV", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_PUBBL_CREAZ_SERV", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_PUBBLICATORE_CREAZ_SERV", EMPTY_STRING));
 
 			propertiesElement.appendChild(
 					createPropertyElement(document, PropertyConstants.PRIMARY_TYPE, OWL_BUSINESS_APPLICATION_VERSION));
