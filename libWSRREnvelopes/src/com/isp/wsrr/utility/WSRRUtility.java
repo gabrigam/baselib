@@ -34,6 +34,10 @@ public class WSRRUtility {
 
 		//sld 13c7c513-3bd7-47a5.b0da.e14503e1dadd - 46ba3546-780e-4e8f.b948.cf9d1fcf4878 consumer CONSUMATORE
 
+		
+		System.out.println(">> tipologia : " + wsrrutility.getServiceVersionTipology("CUGNA10", "00", url, user, password));
+		
+		System.out.println(">> sotto tipologia : " + wsrrutility.getServiceVersionSubTipology("CUGNA10", "00", url, user, password));
 
 		System.out.println(">> "+wsrrutility.getSLAassociatedToSLDExtended("CONSUMATORE_", "00","13c7c513-3bd7-47a5.b0da.e14503e1dadd",url, user, password));
 
@@ -1917,6 +1921,81 @@ public class WSRRUtility {
 		return bsrURI;
 
 	}
+	
+	//metodo inserito il 21012017
+	
+	public String getServiceVersionTipology(String name, String version,
+			String baseURL, String user, String password) {
+
+		JSONArray jsa=null;
+		JSONObject  jso=null;
+		String tipology=null;
+		String bsrURI=null;
+		JSONArray classificationRecord=null;
+				
+		bsrURI=this.getPropertyValueFromGenericObjectByNameAndVersion(name, version, null, baseURL, user, password);
+		
+		if (bsrURI != null) {
+			jsa = new JSONArray(bsrURI);
+			jso =(JSONObject)((JSONArray)jsa.get(0)).get(0);
+			bsrURI=WSRRUtility.getValueFromJsonObject(jso, "value");
+					
+			classificationRecord=this.getClassificationRecord(bsrURI, baseURL, user, password);
+			
+			if (classificationRecord !=null &&classificationRecord.length() !=0 ){
+				
+				tipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
+
+						"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel");
+				
+				if (tipology !=null){
+					tipology = tipology.substring(0, tipology.indexOf("ServiceVersion"));
+				} 
+				
+			}
+			
+		} 
+		
+		return tipology;
+
+	}
+	
+	//metodo inserito il 21012017
+	
+	public String getServiceVersionSubTipology(String name, String version,
+			String baseURL, String user, String password) {
+
+		JSONArray jsa=null;
+		JSONObject  jso=null;
+		String subtipology=null;
+		String bsrURI=null;
+		JSONArray classificationRecord=null;
+		
+		
+		bsrURI=this.getPropertyValueFromGenericObjectByNameAndVersion(name, version, null, baseURL, user, password);
+		
+		 
+
+		if (bsrURI != null) {
+			jsa = new JSONArray(bsrURI);
+			jso =(JSONObject)((JSONArray)jsa.get(0)).get(0);
+			bsrURI=WSRRUtility.getValueFromJsonObject(jso, "value");
+						
+			classificationRecord=this.getClassificationRecord(bsrURI, baseURL, user, password);
+			
+			if (classificationRecord !=null &&classificationRecord.length() !=0 ){
+				
+				subtipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
+
+						"http://isp/");							
+			}
+			
+		} 
+		
+		return subtipology;
+
+	}
+	
 
 	public String getPropertyValueFromGenericObjectByName(String name, String propertyString, String baseURL,
 			String user, String password) {
@@ -2557,6 +2636,75 @@ public class WSRRUtility {
 		return resultdata;
 
 	}
+	
+	private JSONArray getClassificationRecord(String BSRUriServiceVersion, String baseURL, String user,
+			String password) {
+
+		JSONArray resultdata = null;
+
+		String query = "/Metadata/JSON/%BSRURI%/classifications";
+
+		query = query.replaceAll("%BSRURI%", BSRUriServiceVersion);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				resultdata = new JSONArray(sb.toString());
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		if (resultdata != null &&  resultdata.length()==0) {
+
+           resultdata=null;
+		}
+
+		return resultdata;
+
+	}
+
 
 	public String checkClassification(String bsrURI, String classification,String baseURL, String user,
 			String password) {
@@ -4366,4 +4514,55 @@ public class WSRRUtility {
 		return res.toString();
 
 	}
+	
+	//metodo aggiunto il 21012017
+	private static String getObjectValueFromJSONArrayClassification(JSONArray jsa, String key, String field) {
+
+		int i = 0;
+
+		int elements = jsa.length();
+
+		String current;
+
+		JSONObject jso;
+
+		String result = "";
+
+		while (i < elements) {
+
+			jso = jsa.getJSONObject(i);
+
+			try {
+
+				current = ((String) jso.get(key));
+
+			} catch (Exception ex) {
+
+				current = "";
+			}
+
+			if (current.startsWith(field)) {
+
+				result = WSRRUtility.getData(current);
+
+				break;
+
+			}
+
+			i++;
+
+		}
+
+		return result;
+
+	}
+	
+	//metodo aggiunto il 21012017
+	private static String getData(String input) {
+
+		return input.substring(input.indexOf("#", 0) + 1, input.length());
+
+	}
+	
+	
 }
