@@ -34,10 +34,15 @@ public class WSRRUtility {
 
 		//sld 13c7c513-3bd7-47a5.b0da.e14503e1dadd - 46ba3546-780e-4e8f.b948.cf9d1fcf4878 consumer CONSUMATORE
 
+		//f5418df5-208f-4f61.b3db.6d4d246ddb51
 		
-		System.out.println(">> tipologia : " + wsrrutility.getServiceVersionTipology("CUGNA10", "00", url, user, password));
+//		System.out.println(">> tipologia : " + wsrrutility.getServiceVersionTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
 		
-		System.out.println(">> sotto tipologia : " + wsrrutility.getServiceVersionSubTipology("CUGNA10", "00", url, user, password));
+//		System.out.println(">> sotto tipologia : " + wsrrutility.getServiceVersionSubTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
+		
+		System.out.println(">> tipologia bsruri : " + wsrrutility.getServiceVersionTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", "00", url, user, password));
+		
+		System.out.println(">> sotto tipologia bsruri : " + wsrrutility.getServiceVersionSubTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", "00", url, user, password));
 
 		System.out.println(">> "+wsrrutility.getSLAassociatedToSLDExtended("CONSUMATORE_", "00","13c7c513-3bd7-47a5.b0da.e14503e1dadd",url, user, password));
 
@@ -1924,7 +1929,7 @@ public class WSRRUtility {
 	
 	//metodo inserito il 21012017
 	
-	public String getServiceVersionTipology(String name, String version,
+	public String getServiceVersionTipologyByNameAndVersion(String name, String version,
 			String baseURL, String user, String password) {
 
 		JSONArray jsa=null;
@@ -1962,7 +1967,64 @@ public class WSRRUtility {
 	
 	//metodo inserito il 21012017
 	
-	public String getServiceVersionSubTipology(String name, String version,
+	public String getServiceVersionTipologyBybsrURI(String bsrURI, String version,
+			String baseURL, String user, String password) {
+
+		String tipology=null;
+		JSONArray classificationRecord=null;
+		
+		if (bsrURI != null) {
+
+					
+			classificationRecord=this.getClassificationRecord(bsrURI, baseURL, user, password);
+			
+			if (classificationRecord !=null &&classificationRecord.length() !=0 ){
+				
+				tipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
+
+						"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel");
+				
+				if (tipology !=null){
+					tipology = tipology.substring(0, tipology.indexOf("ServiceVersion"));
+				} 
+				
+			}
+			
+		} 
+		
+		return tipology;
+
+	}
+	//metodo inserito il 21012017
+	
+	public String getServiceVersionSubTipologyBybsrURI(String bsrURI, String version,
+			String baseURL, String user, String password) {
+
+
+		String subtipology=null;
+		JSONArray classificationRecord=null;
+		
+		if (bsrURI != null) {
+
+						
+			classificationRecord=this.getClassificationRecord(bsrURI, baseURL, user, password);
+			
+			if (classificationRecord !=null &&classificationRecord.length() !=0 ){
+				
+				subtipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
+
+						"http://isp/");							
+			}
+			
+		} 
+		
+		return subtipology;
+
+	}
+	
+	//metodo inserito il 21012017
+	
+	public String getServiceVersionSubTipologyByNameAndVersion(String name, String version,
 			String baseURL, String user, String password) {
 
 		JSONArray jsa=null;
@@ -1995,7 +2057,6 @@ public class WSRRUtility {
 		return subtipology;
 
 	}
-	
 
 	public String getPropertyValueFromGenericObjectByName(String name, String propertyString, String baseURL,
 			String user, String password) {
