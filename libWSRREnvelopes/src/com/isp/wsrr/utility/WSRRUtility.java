@@ -36,13 +36,13 @@ public class WSRRUtility {
 
 		//f5418df5-208f-4f61.b3db.6d4d246ddb51
 		
-//		System.out.println(">> tipologia : " + wsrrutility.getServiceVersionTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
+		System.out.println(">> tipologia : " + wsrrutility.getServiceVersionTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
 		
-//		System.out.println(">> sotto tipologia : " + wsrrutility.getServiceVersionSubTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
+		System.out.println(">> sotto tipologia : " + wsrrutility.getServiceVersionSubTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
 		
-		System.out.println(">> tipologia bsruri : " + wsrrutility.getServiceVersionTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", "00", url, user, password));
+		System.out.println(">> tipologia bsruri : " + wsrrutility.getServiceVersionTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51",  url, user, password));
 		
-		System.out.println(">> sotto tipologia bsruri : " + wsrrutility.getServiceVersionSubTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", "00", url, user, password));
+		System.out.println(">> sotto tipologia bsruri : " + wsrrutility.getServiceVersionSubTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", url, user, password));
 
 		System.out.println(">> "+wsrrutility.getSLAassociatedToSLDExtended("CONSUMATORE_", "00","13c7c513-3bd7-47a5.b0da.e14503e1dadd",url, user, password));
 
@@ -1967,7 +1967,7 @@ public class WSRRUtility {
 	
 	//metodo inserito il 21012017
 	
-	public String getServiceVersionTipologyBybsrURI(String bsrURI, String version,
+	public String getServiceVersionTipologyBybsrURI(String bsrURI, 
 			String baseURL, String user, String password) {
 
 		String tipology=null;
@@ -1997,7 +1997,7 @@ public class WSRRUtility {
 	}
 	//metodo inserito il 21012017
 	
-	public String getServiceVersionSubTipologyBybsrURI(String bsrURI, String version,
+	public String getServiceVersionSubTipologyBybsrURI(String bsrURI, 
 			String baseURL, String user, String password) {
 
 
