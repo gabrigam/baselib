@@ -22,13 +22,16 @@ public class WSRRUtility {
 
 		WSRRUtility wsrrutility=new WSRRUtility();
 
-		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
+		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5/";
 		String user = "gabriele";
 		String password = "viviana";
 
 		System.out.println("azz");
 		String name=null;
 		JSONArray jsa=new JSONArray();
+		//temp_http://server:porta/PRODSIC01_Application
+		System.out.println("GL  "+wsrrutility.getProducerFromEndpointByUriNoSecurity(".*TESTGAB", url, user, password));
+		System.out.println(wsrrutility.getProducerFromEndpointByUriFromProxyService(".*PRODSIC01_ciao", "SOAP",url, user, password));
 
 		//SLD - input_00_CICS  1d2b071d-1db2-4291.878b.ee3e08ee8bd7
 
@@ -1926,6 +1929,152 @@ public class WSRRUtility {
 		return bsrURI;
 
 	}
+	
+	// metodo inserito il 310117
+	
+	public String getProducerFromEndpointByUriNoSecurity(String endpointURI,String baseURL, String user, String password) {
+
+		// Create the variable to return
+		String result = null;
+
+		//String query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29%20and%20@sm63_USO_SICUREZZA=%27NO%27]]&p1=name&p2=gep63_ABILITAZ_INFRASTR";
+		String query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29%20and%20@sm63_USO_SICUREZZA!=%27SI-Datapower%27]]&p1=name&p2=gep63_ABILITAZ_INFRASTR";
+		//String query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29]]&p1=name&p2=gep63_ABILITAZ_INFRASTR&p3=sm63_USO_SICUREZZA";
+
+		query = query.replaceAll("%ENDPOINTURI%", endpointURI);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				result = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+			result="["+WSRRUtility.jsonWithError(e.getMessage())+"]";
+
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+
+		return result;
+
+	}
+	
+	// metodo inserito il 310117
+	
+	public String getProducerFromEndpointByUriFromProxyService(String endpointURI,String interfaceType,
+			String baseURL, String user, String password) {
+
+		// Create the variable to return
+		String result = null;
+		String effectiveProxyInterface="sm63_SOAPProxy";
+		
+		if (interfaceType !=null) {			
+			if (interfaceType.equalsIgnoreCase("SOAP")) effectiveProxyInterface="sm63_SOAPProxy";
+			if (interfaceType.equalsIgnoreCase("REST")) effectiveProxyInterface="rest80_RESTProxy"; 
+			if (interfaceType.equalsIgnoreCase("CALLABLE")) effectiveProxyInterface="rest80_CALLABLEProxy";
+		}
+		String query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29/%INTERFACERELATION%%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29]]&p1=name&p2=gep63_ABILITAZ_INFRASTR";
+
+        query = query.replaceAll("%INTERFACERELATION%", effectiveProxyInterface);
+		query = query.replaceAll("%ENDPOINTURI%", endpointURI);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				result = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+			result="["+WSRRUtility.jsonWithError(e.getMessage())+"]";
+
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		return result;
+
+	}
+	
 	
 	//metodo inserito il 21012017
 	
@@ -4625,5 +4774,12 @@ public class WSRRUtility {
 
 	}
 	
+	//metodo aggiunto il 31012017
+	
+	private static String jsonWithError(String errorMessage){
+		
+		return "{\"chiamata_in_errore\":\""+errorMessage+"\"}";
+		
+	}
 	
 }
