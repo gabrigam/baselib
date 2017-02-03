@@ -22,7 +22,7 @@ public class WSRRUtility {
 
 		WSRRUtility wsrrutility=new WSRRUtility();
 
-		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5/";
+		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
 		String user = "gabriele";
 		String password = "viviana";
 
@@ -30,8 +30,13 @@ public class WSRRUtility {
 		String name=null;
 		JSONArray jsa=new JSONArray();
 		//temp_http://server:porta/PRODSIC01_Application
-		System.out.println("GL  "+wsrrutility.getProducerFromEndpointByUriNoSecurity(".*TESTGAB", url, user, password));
-		System.out.println(wsrrutility.getProducerFromEndpointByUriFromProxyService(".*PRODSIC01_ciao", "SOAP",url, user, password));
+		
+		//469ed046-8e38-4806.9289.6896c6688924
+		//getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity
+		
+		wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity("469ed046-8e38-4806.9289.6896c6688924", "Application", "SOAP", url, user, password);
+		//System.out.println("GL  "+wsrrutility.getProducerFromEndpointByUriNoSecurity(".*TESTGAB", url, user, password));
+		//System.out.println(wsrrutility.getProducerFromEndpointByUriFromProxyService(".*PRODSIC01_ciao", "SOAP",url, user, password));
 
 		//SLD - input_00_CICS  1d2b071d-1db2-4291.878b.ee3e08ee8bd7
 
@@ -3941,6 +3946,203 @@ public class WSRRUtility {
 
 	}
 
+	//03022017
+	
+	public String getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(String bsrURI,String environment,String interfaceType, String baseURL,
+			String user, String password) {
+
+		// Create the variable to return
+		String data = null;
+		String query = null;
+
+		String environmentQuery = "http://www.ibm.com/xmlns/prod/serviceregistry/6/1/GovernanceProfileTaxonomy%23%ENVIRONMENT%";
+		environmentQuery = environmentQuery.replaceAll("%ENVIRONMENT%", environment);
+
+		query= "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_availableEndpoints()[exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=name&p3=sm63_USO_SICUREZZA";
+		query = query.replaceAll("%BSRURI%", bsrURI);
+		query = query.replaceAll("%ENVIRONMENT%", environmentQuery);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				data = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		JSONArray jsa = new JSONArray(data);
+
+		JSONArray jsaint = null;
+		JSONObject jso = null;
+		
+		String localUri=null;
+		String sicurezza=null;
+		String enpointName=null;
+		
+
+		for (int i = 0; i < jsa.length(); i++) {
+			jsaint = jsa.getJSONArray(i);
+			for (int ii = 0; ii < jsaint.length(); ii++) {
+				jso = (JSONObject) jsaint.get(ii);
+
+				if (jso.getString("name").equals("bsrURI")) {
+					localUri = (String) jso.getString("value");
+				}
+				if (jso.getString("name").equals("sm63_USO_SICUREZZA")) { 
+
+					if (!jso.isNull("value"))
+						sicurezza = (String) jso.get("value");
+					else
+						sicurezza = "";
+				}
+				
+				if (jso.getString("name").equals("name")) { //endpoint
+
+					if (!jso.isNull("value"))
+						enpointName = (String) jso.get("value");
+					else
+						enpointName = "";
+				}
+			}
+		}
+		
+		data=enpointName;
+		
+		if (sicurezza !=null && sicurezza.equals("SI-Datapower")){
+			
+			data=this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, interfaceType, baseURL, user, password);
+		}
+
+		return data;
+
+	}
+	
+	//03022017
+	
+	public String getProxyEndpointNameFromEndpointFilteredByInterface(String bsrURI,String interfaceType, String baseURL,
+			String user, String password) {
+
+		// Create the variable to return
+		String data = null;
+		String query = null;
+		String effectiveProxyInterface=null;
+		JSONObject jso=null;
+		
+		if (interfaceType !=null) {			
+			if (interfaceType.equalsIgnoreCase("SOAP")) effectiveProxyInterface="sm63_SOAPProxy";
+			if (interfaceType.equalsIgnoreCase("REST")) effectiveProxyInterface="rest80_RESTProxy"; 
+			if (interfaceType.equalsIgnoreCase("CALLABLE")) effectiveProxyInterface="rest80_CALLABLEProxy";
+		}
+		
+		query= "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/%RELATION%()&p1=name";
+		query = query.replaceAll("%BSRURI%", bsrURI);
+		query = query.replaceAll("%RELATION%", effectiveProxyInterface);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				data = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+	
+		//[[{"value":"http:\/\/server:porta\/PRODSIC01_ciao","name":"name"}]]
+		if (data != null){
+			JSONArray jsona1=new JSONArray(data);
+			JSONArray jsona2=(JSONArray)jsona1.get(0);				
+			jso=(JSONObject)jsona2.get(0);
+			data=WSRRUtility.getValueFromJsonObject(jso, "value");			
+		}
+
+		return data;
+
+	}
+	
+	
 	public JSONArray getEndpointInfoFromInterface(String bsrURI,String environment, String baseURL,
 			String user, String password) {
 
