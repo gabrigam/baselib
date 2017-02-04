@@ -35,7 +35,14 @@ public class WSRRUtility {
 		// b9ef54b9-6e00-400c.acac.8aa4b98aacc2 no sicurezz
 		// 6657b666-f881-41fd.9363.835cb18363e2
 		// getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity
-		wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("7e58c57e-f0cb-4bf2.ae1c.977271971c0e",
+
+		String dddd=WSRRUtility.getServ("SCHOSTServiceVersion");
+		
+		String padded = String.format("%-20s", "123456");
+		String padded1 = String.format("%-20s", "ABCDE");
+		String union=padded+padded1+"*";
+		
+		wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("2c37de2c-a91d-4d08.a508.5a7f485a08d1",
 				"Application", true,url, user, password);
 		
 		System.out.println("No DP " + wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(
@@ -4150,7 +4157,8 @@ public class WSRRUtility {
 		// Create the variable to return
 		JSONArray data = null;
 		String query = null;
-		String[] endpoints = new String[10];
+
+		String[] endpoints  = new String[]{" ", " ", " "," "," "," "," "," "," "," "};
 
 		String environmentQuery = "http://www.ibm.com/xmlns/prod/serviceregistry/6/1/GovernanceProfileTaxonomy%23%ENVIRONMENT%";
 		environmentQuery = environmentQuery.replaceAll("%ENVIRONMENT%", environment);
@@ -5122,6 +5130,17 @@ public class WSRRUtility {
 
 		return "{\"chiamata_in_errore\":\"" + errorMessage + "\"}";
 
+	}
+	
+	private static String getServ(String k) {
+		String result="";
+		
+		int i=0;
+		
+		i=k.indexOf("ServiceVersion");
+		
+		
+		return k.substring(0,i);
 	}
 
 }
