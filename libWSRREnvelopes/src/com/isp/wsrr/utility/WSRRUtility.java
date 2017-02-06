@@ -36,25 +36,32 @@ public class WSRRUtility {
 		// 6657b666-f881-41fd.9363.835cb18363e2
 		// getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity
 
-		String dddd=WSRRUtility.getServ("SCHOSTServiceVersion");
-		
+		String dddd = WSRRUtility.getServ("SCHOSTServiceVersion");
+
 		String padded = String.format("%-20s", "123456");
 		String padded1 = String.format("%-20s", "ABCDE");
-		String union=padded+padded1+"*";
-		
-		wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("2c37de2c-a91d-4d08.a508.5a7f485a08d1",
-				"Application", true,url, user, password);
-		
-		System.out.println("No DP " + wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(
-				"b9ef54b9-6e00-400c.acac.8aa4b98aacc2", "Application", "SOAP", false, url, user, password));
-		System.out.println("Si DP " + wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(
-				"469ed046-8e38-4806.9289.6896c6688924", "Application", "SOAP", true, url, user, password));
+		String union = padded + padded1 + "*";
+
+		// wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("2c37de2c-a91d-4d08.a508.5a7f485a08d1",
+		// "Application", true,url, user, password);
+
+		wsrrutility.isEndpointSecurityPresentByProviderBsrURI("6657b666-f881-41fd.9363.835cb18363e2", "SI-Datapowe",
+				url, user, password);
+
+		// System.out.println("No DP " +
+		// wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(
+		// "b9ef54b9-6e00-400c.acac.8aa4b98aacc2", "Application", "SOAP", true,
+		// url, user, password));
+		// System.out.println("Si DP " +
+		// wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(
+		// "469ed046-8e38-4806.9289.6896c6688924", "Application", "SOAP", true,
+		// url, user, password));
 
 		// System.out.println("GL
 		// "+wsrrutility.getProducerFromEndpointByUriNoSecurity(".*TESTGAB",
 		// url, user, password));
-		// System.out.println(wsrrutility.getProducerFromEndpointByUriFromProxyService(".*PRODSIC01_ciao",
-		// "SOAP",url, user, password));
+		System.out.println(wsrrutility.getProducerFromEndpointByUriFromProxyService(".*PRODSIC01_ciao", "SOAP", url,
+				user, password));
 
 		// SLD - input_00_CICS 1d2b071d-1db2-4291.878b.ee3e08ee8bd7
 
@@ -94,7 +101,7 @@ public class WSRRUtility {
 				password);
 
 		String[] SLAactivateTransaction = {
-				"http://www.ibm.com/xmlns/prod/serviceregistry/lifecycle/v6r3/LifecycleDefinition%23ActivateSLA" };
+		"http://www.ibm.com/xmlns/prod/serviceregistry/lifecycle/v6r3/LifecycleDefinition%23ActivateSLA" };
 
 		wsrrutility.changeGovernanceState("3f13353f-132f-4ff8.9b87.c2384dc28710", SLAactivateTransaction, url, user,
 				password);
@@ -138,13 +145,13 @@ public class WSRRUtility {
 
 		http: // www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23BusinessApplication
 
-		// jsa=wsrrutility.getObjectPropertiesData("","&p1=name", url, user,
-		// password);
+			// jsa=wsrrutility.getObjectPropertiesData("","&p1=name", url, user,
+			// password);
 
-		// jsa=wsrrutility.getEndpointInfoFromBsrUriCatalogAndEnvironment("dc9e1bdc-b933-43e3.93c1.bdff9abdc158",
-		// "Produzione", url, user, password);
+			// jsa=wsrrutility.getEndpointInfoFromBsrUriCatalogAndEnvironment("dc9e1bdc-b933-43e3.93c1.bdff9abdc158",
+			// "Produzione", url, user, password);
 
-		System.out.println(jsa);
+			System.out.println(jsa);
 
 		String ggg = wsrrutility.getGenericObjectByNameAndVersionAndPrimaryTypeExtended("0M", "00",
 				"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ApplicationVersion",
@@ -2039,7 +2046,7 @@ public class WSRRUtility {
 			if (interfaceType.equalsIgnoreCase("CALLABLE"))
 				effectiveProxyInterface = "rest80_CALLABLEProxy";
 		}
-		String query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29/%INTERFACERELATION%%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29]]&p1=name&p2=gep63_ABILITAZ_INFRASTR";
+		String query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29/%INTERFACERELATION%%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29]]&p1=name&p2=gep63_ABILITAZ_INFRASTR&p3=bsrURI";
 
 		query = query.replaceAll("%INTERFACERELATION%", effectiveProxyInterface);
 		query = query.replaceAll("%ENDPOINTURI%", endpointURI);
@@ -3954,12 +3961,13 @@ public class WSRRUtility {
 
 	// 03022017
 
-	public String getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(String bsrURI, String environment,
-			String interfaceType, boolean security, String baseURL, String user, String password) {
+	public String[] getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(String bsrURI, String environment,
+			String interfaceType, boolean security, String baseURL, String user, String password) throws Exception {
 
 		// Create the variable to return
 		String data = null;
 		String query = null;
+		String[] endpoints = new String[] { " ", " ", " ", " ", " ", " ", " ", " ", " ", " " };
 
 		String environmentQuery = "http://www.ibm.com/xmlns/prod/serviceregistry/6/1/GovernanceProfileTaxonomy%23%ENVIRONMENT%";
 		environmentQuery = environmentQuery.replaceAll("%ENVIRONMENT%", environment);
@@ -4011,6 +4019,7 @@ public class WSRRUtility {
 			urlConnection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new Exception("errore: in getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity");
 		}
 
 		finally {
@@ -4018,57 +4027,74 @@ public class WSRRUtility {
 				urlConnection.disconnect();
 		}
 
-		JSONArray jsa = new JSONArray(data);
+		if (data != null) {
 
-		JSONArray jsaint = null;
-		JSONObject jso = null;
+			JSONArray jsa = new JSONArray(data);
 
-		String localUri = null;
-		String sicurezza = null;
-		String enpointName = null;
+			JSONArray jsaint = null;
+			JSONObject jso = null;
 
-		for (int i = 0; i < jsa.length(); i++) {
-			jsaint = jsa.getJSONArray(i);
-			for (int ii = 0; ii < jsaint.length(); ii++) {
-				jso = (JSONObject) jsaint.get(ii);
+			String localUri = null;
+			String sicurezza = null;
+			String endpointName = null;
+			int c=0;
 
-				if (jso.getString("name").equals("bsrURI")) {
-					localUri = (String) jso.getString("value");
+			for (int i = 0; i < jsa.length(); i++) {
+				jsaint = jsa.getJSONArray(i);
+				for (int ii = 0; ii < jsaint.length(); ii++) {
+					jso = (JSONObject) jsaint.get(ii);
+
+					if (jso.getString("name").equals("bsrURI")) {
+						localUri = (String) jso.getString("value");
+					}
+					if (jso.getString("name").equals("sm63_USO_SICUREZZA")) {
+
+						if (!jso.isNull("value")) {
+							sicurezza = (String) jso.get("value");
+							if (sicurezza.equals(""))
+								sicurezza = "NO";
+						} else
+							sicurezza = "NO";
+					}
+
+					if (jso.getString("name").equals("name")) { // endpoint
+
+						if (!jso.isNull("value"))
+							endpointName = (String) jso.get("value");
+						else
+							endpointName = "";
+					}
 				}
-				if (jso.getString("name").equals("sm63_USO_SICUREZZA")) {
-
-					if (!jso.isNull("value"))
-						sicurezza = (String) jso.get("value");
-					else
-						sicurezza = "";
+				
+				if (security) {
+					if (sicurezza != null && !sicurezza.equals("NO")) {
+	                 endpointName = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, interfaceType, baseURL,
+								user, password);
+						if (c<=9) {
+							endpoints[c]=endpointName;
+							c++;
+						}	                 
+					}
+					
+				} else {
+					
+					if (c<=9) {
+						endpoints[c]=endpointName;
+						c++;
+					}
 				}
-
-				if (jso.getString("name").equals("name")) { // endpoint
-
-					if (!jso.isNull("value"))
-						enpointName = (String) jso.get("value");
-					else
-						enpointName = "";
-				}
+				
 			}
-		}
 
-		data = enpointName;
-
-		if (security) {
-			if (sicurezza != null && sicurezza.equals("SI-Datapower")) {
-				data = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, interfaceType, baseURL, user,
-						password);
-			}
 		}
-		return data;
+		return endpoints;
 
 	}
 
 	// 03022017
 
 	public String getProxyEndpointNameFromEndpointFilteredByInterface(String bsrURI, String interfaceType,
-			String baseURL, String user, String password) {
+			String baseURL, String user, String password) throws Exception {
 
 		// Create the variable to return
 		String data = null;
@@ -4132,6 +4158,7 @@ public class WSRRUtility {
 			urlConnection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new Exception("errore: in getProxyEndpointNameFromEndpointFilteredByInterface");
 		}
 
 		finally {
@@ -4151,14 +4178,14 @@ public class WSRRUtility {
 	}
 
 	// 03022017
-	public String[] getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity(String bsrURI,
-			String environment, boolean security, String baseURL, String user, String password) {
+	public String[] getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity(String bsrURI, String environment,
+			boolean security, String baseURL, String user, String password) throws Exception {
 
 		// Create the variable to return
 		JSONArray data = null;
 		String query = null;
 
-		String[] endpoints  = new String[]{" ", " ", " "," "," "," "," "," "," "," "};
+		String[] endpoints = new String[] { " ", " ", " ", " ", " ", " ", " ", " ", " ", " " };
 
 		String environmentQuery = "http://www.ibm.com/xmlns/prod/serviceregistry/6/1/GovernanceProfileTaxonomy%23%ENVIRONMENT%";
 		environmentQuery = environmentQuery.replaceAll("%ENVIRONMENT%", environment);
@@ -4210,6 +4237,7 @@ public class WSRRUtility {
 			urlConnection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new Exception("errore: getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity");
 		}
 
 		finally {
@@ -4217,77 +4245,153 @@ public class WSRRUtility {
 				urlConnection.disconnect();
 		}
 
-		if (data != null && data.equals("[]"))
-			data = null;
+		if (data != null) {
 
-		JSONArray jsaint = null;
-		JSONObject jso = null;
+			JSONArray jsaint = null;
+			JSONObject jso = null;
 
-		String localUri = null;
-		String sicurezza = null;
-		String enpointName = null;
-		boolean withproxy=false;
-        int c = 0;
+			String localUri = null;
+			String sicurezza = null;
+			String enpointName = null;
+			boolean withproxy = false;
+			int c = 0;
 
-		for (int i = 0; i < data.length(); i++) {
-			jsaint = data.getJSONArray(i);
-			for (int ii = 0; ii < jsaint.length(); ii++) {
-				jso = (JSONObject) jsaint.get(ii);
+			for (int i = 0; i < data.length(); i++) {
+				jsaint = data.getJSONArray(i);
+				for (int ii = 0; ii < jsaint.length(); ii++) {
+					jso = (JSONObject) jsaint.get(ii);
 
-				if (jso.getString("name").equals("bsrURI")) {
-					localUri = (String) jso.getString("value");
+					if (jso.getString("name").equals("bsrURI")) {
+						localUri = (String) jso.getString("value");
+					}
+					if (jso.getString("name").equals("sm63_USO_SICUREZZA")) {
+
+						if (!jso.isNull("value")) {
+							sicurezza = (String) jso.get("value");
+							if (sicurezza.equals(""))
+								sicurezza = "NO";
+						} else
+							sicurezza = "NO";
+					}
+
+					if (jso.getString("name").equals("name")) { // endpoint
+
+						if (!jso.isNull("value"))
+							enpointName = (String) jso.get("value");
+						else
+							enpointName = "";
+					}
 				}
-				if (jso.getString("name").equals("sm63_USO_SICUREZZA")) {
 
-					if (!jso.isNull("value"))
-						sicurezza = (String) jso.get("value");
-					else
-						sicurezza = "";
+				if (c <= 9)
+					endpoints[c] = enpointName;
+
+				if (security) {
+					if (sicurezza != null && !sicurezza.equals("NO")) {
+
+						withproxy = false;
+
+						if (c <= 9) {
+							endpoints[c] = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, "SOAP",
+									baseURL, user, password);
+							withproxy = true;
+							c++;
+						}
+						if (c <= 9) {
+							endpoints[c] = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, "REST",
+									baseURL, user, password);
+							withproxy = true;
+							c++;
+						}
+						if (c <= 9) {
+							endpoints[c] = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri,
+									"CALLABLE", baseURL, user, password);
+							withproxy = true;
+							c++;
+						}
+					}
 				}
 
-				if (jso.getString("name").equals("name")) { // endpoint
+				if (!withproxy)
+					c++;
+			}
+		}
+		return endpoints;
 
-					if (!jso.isNull("value"))
-						enpointName = (String) jso.get("value");
-					else
-						enpointName = "";
-				}
+	}
+
+	// 03022017
+	public boolean isEndpointSecurityPresentByProviderBsrURI(String bsrURI, String securitytype, String baseURL,
+			String user, String password) throws Exception {
+
+		// Create the variable to return
+		JSONArray data = null;
+		String query = null;
+		Boolean result = false;
+
+		query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_provides()/gep63_availableEndpoints()[@sm63_USO_SICUREZZA='%TIPOSICUREZZA%']&p1=bsrURI";
+		query = query.replaceAll("%BSRURI%", bsrURI);
+		query = query.replaceAll("%TIPOSICUREZZA%", securitytype);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
 			}
 
-			if (c <= 9)
-				endpoints[c] = enpointName;
-
-			
-			if (security) {
-				if (sicurezza != null && sicurezza.equals("SI-Datapower")) {
-					
-					withproxy=false;
-					
-					if (c <= 9) {
-						endpoints[c] = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, "SOAP",
-								baseURL, user, password);
-						withproxy=true;
-						c++;
-					}
-					if (c <= 9) {
-						endpoints[c] = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, "REST",
-								baseURL, user, password);
-						withproxy=true;
-						c++;
-					}
-					if (c <= 9) {
-						endpoints[c] = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, "CALLABLE",
-								baseURL, user, password);
-						withproxy=true;
-						c++;
-					}
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
 				}
+				data = new JSONArray(sb.toString());
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
 			}
-			
-			if (!withproxy) c++;
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("errore: isEndpointSecurityPresentByProviderBsrURI");
 		}
 
-		return endpoints;
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		if (data != null) {
+
+			if (data.length() != 0)
+				result = true;
+
+		}
+
+		return result;
 
 	}
 
@@ -4811,7 +4915,7 @@ public class WSRRUtility {
 					stringBuffer.append(line);
 				}
 				reader.close();
-				throw new Exception("Unable to create WSRR GenericObject " + stringBuffer.toString());
+				throw new Exception("Unable to update WSRR GenericObject " + stringBuffer.toString());
 			}
 			urlConnection.disconnect();
 		} catch (Exception e) {
@@ -5131,16 +5235,15 @@ public class WSRRUtility {
 		return "{\"chiamata_in_errore\":\"" + errorMessage + "\"}";
 
 	}
-	
+
 	private static String getServ(String k) {
-		String result="";
-		
-		int i=0;
-		
-		i=k.indexOf("ServiceVersion");
-		
-		
-		return k.substring(0,i);
+		String result = "";
+
+		int i = 0;
+
+		i = k.indexOf("ServiceVersion");
+
+		return k.substring(0, i);
 	}
 
 }
