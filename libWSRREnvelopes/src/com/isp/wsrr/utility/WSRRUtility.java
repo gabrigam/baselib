@@ -22,7 +22,7 @@ public class WSRRUtility {
 
 		WSRRUtility wsrrutility = new WSRRUtility();
 
-		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
+		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5/";
 		String user = "gabriele";
 		String password = "viviana";
 
@@ -60,6 +60,8 @@ public class WSRRUtility {
 		// System.out.println("GL
 		// "+wsrrutility.getProducerFromEndpointByUriNoSecurity(".*TESTGAB",
 		// url, user, password));
+		
+		wsrrutility.getTargetWSRRFromBootstrapRuntime("LOOKUPWSRRKK", url, user, password);
 		System.out.println(wsrrutility.getProducerFromEndpointByUriFromProxyService(".*PRODSIC01_ciao", "SOAP", url,
 				user, password));
 
@@ -2046,7 +2048,7 @@ public class WSRRUtility {
 			if (interfaceType.equalsIgnoreCase("CALLABLE"))
 				effectiveProxyInterface = "rest80_CALLABLEProxy";
 		}
-		String query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29/%INTERFACERELATION%%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29]]&p1=name&p2=gep63_ABILITAZ_INFRASTR&p3=bsrURI";
+		String query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[gep63_provides%28.%29/gep63_availableEndpoints%28.%29/%INTERFACERELATION%%28.%29[matches%28@name,%27%ENDPOINTURI%%27%29]]&p1=name&p2=gep63_ABILITAZ_INFRASTR&p3=bsrURI";
 
 		query = query.replaceAll("%INTERFACERELATION%", effectiveProxyInterface);
 		query = query.replaceAll("%ENDPOINTURI%", endpointURI);
@@ -4329,7 +4331,7 @@ public class WSRRUtility {
 		String query = null;
 		Boolean result = false;
 
-		query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_provides()/gep63_availableEndpoints()[@sm63_USO_SICUREZZA='%TIPOSICUREZZA%']&p1=bsrURI";
+		query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_provides()/gep63_availableEndpoints()[@sm63_USO_SICUREZZA='%TIPOSICUREZZA%']&p1=bsrURI";
 		query = query.replaceAll("%BSRURI%", bsrURI);
 		query = query.replaceAll("%TIPOSICUREZZA%", securitytype);
 
@@ -4394,7 +4396,81 @@ public class WSRRUtility {
 		return result;
 
 	}
+    //03022017
+	
+	public String getTargetWSRRFromBootstrapRuntime(String catalogQuery, String baseURL,
+			String user, String password) throws Exception {
 
+		// Create the variable to return
+		String data = null;
+		String query = null;
+		Boolean result = false;
+
+		query = "Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGQUERY%'%20and%20@version='00']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/profile/v8r0/RESTModel%23RESTServiceEndpoint')]&p1=name";
+		query = query.replaceAll("%CATALOGQUERY%", catalogQuery);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				data = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("errore: getTargetWSRRFromBootstrapRuntime");
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		if (data != null && !data.equals("[]")) {
+			JSONArray jsona1 = new JSONArray(data);
+			JSONArray jsona2 = (JSONArray) jsona1.get(0);
+			JSONObject jso = (JSONObject) jsona2.get(0);
+			data = WSRRUtility.getValueFromJsonObject(jso, "value");
+		}
+		
+		return data;
+
+	}
+	
 	public JSONArray getEndpointInfoFromInterface(String bsrURI, String environment, String baseURL, String user,
 			String password) {
 
