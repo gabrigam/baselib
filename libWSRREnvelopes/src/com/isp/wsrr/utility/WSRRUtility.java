@@ -4913,7 +4913,7 @@ public class WSRRUtility {
 					stringBuffer.append(line);
 				}
 				reader.close();
-				throw new Exception("Unable to create WSRR GenericObject " + stringBuffer.toString());
+				throw new Exception("Error: updateRelationShip " + stringBuffer.toString());
 			}
 			urlConnection.disconnect();
 		} catch (Exception e) {
