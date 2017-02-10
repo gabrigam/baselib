@@ -22,7 +22,7 @@ public class WSRRUtility {
 
 		WSRRUtility wsrrutility = new WSRRUtility();
 
-		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5/";
+		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
 		String user = "gabriele";
 		String password = "viviana";
 
@@ -57,6 +57,9 @@ public class WSRRUtility {
 		// "469ed046-8e38-4806.9289.6896c6688924", "Application", "SOAP", true,
 		// url, user, password));
 
+		//8fa8228f-22e3-439d.b25d.8cb5878c5dc7
+		wsrrutility.getServiceVersionSubTipologyBybsrURI("3813b938-ec58-48f5.b803.a3c3a1a303ee", url, user, password);
+		//wsrrutility.getClassificationRecord("8fa8228f-22e3-439d.b25d.8cb5878c5dc7", url, user, password);
 		// System.out.println("GL
 		// "+wsrrutility.getProducerFromEndpointByUriNoSecurity(".*TESTGAB",
 		// url, user, password));
@@ -2155,21 +2158,19 @@ public class WSRRUtility {
 		JSONArray classificationRecord = null;
 
 		if (bsrURI != null) {
-
+			
 			classificationRecord = this.getClassificationRecord(bsrURI, baseURL, user, password);
 
 			if (classificationRecord != null && classificationRecord.length() != 0) {
-
+				
 				tipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
 
 						"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel");
-
-				if (tipology != null) {
+				
+				if (tipology != null && tipology.contains("ServiceVersion") ) {
 					tipology = tipology.substring(0, tipology.indexOf("ServiceVersion"));
 				}
-
 			}
-
 		}
 
 		return tipology;
@@ -2178,16 +2179,16 @@ public class WSRRUtility {
 	// metodo inserito il 21012017
 
 	public String getServiceVersionSubTipologyBybsrURI(String bsrURI, String baseURL, String user, String password) {
-
+		
 		String subtipology = null;
 		JSONArray classificationRecord = null;
 
 		if (bsrURI != null) {
 
 			classificationRecord = this.getClassificationRecord(bsrURI, baseURL, user, password);
-
+			
 			if (classificationRecord != null && classificationRecord.length() != 0) {
-
+				
 				subtipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
 
 						"http://isp/");
@@ -2196,7 +2197,6 @@ public class WSRRUtility {
 		}
 
 		return subtipology;
-
 	}
 
 	// metodo inserito il 21012017
