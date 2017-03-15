@@ -26,6 +26,7 @@ import teamworks.TWList;
 //24/10/2016 ambito e ambito-descr
 //25/10/2016 pubblicatore e data
 //09/12/2016 PROPERTY_GPX63_USERDEFTIME inserito nuovo campo nella creazione SLA
+//15032017 aggiunti campi alla AV per aderire al modello
 public class WSRREnvelopes {
 
 	public WSRREnvelopes() {
@@ -396,6 +397,13 @@ public class WSRREnvelopes {
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_PUBBL_CREAZ_SERV", EMPTY_STRING));
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_PUBBLICATORE_CREAZ_SERV", EMPTY_STRING));
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_TIPOLOGIA", EMPTY_STRING));
+			
+			//15032017
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DERIVANTE_DA_ALTRI_SERV",EMPTY_STRING ));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SECURITY_ROLE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_NOME_SERVIZIO_PRECEDENTE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_TIPOLOGIA_OGGETTO_ESISTENTE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DOC_ANALISI_DETTAGLIO", EMPTY_STRING));
 			
 			propertiesElement.appendChild(
 					createPropertyElement(document, PropertyConstants.PRIMARY_TYPE, OWL_BUSINESS_APPLICATION_VERSION));
