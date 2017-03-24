@@ -35,7 +35,11 @@ public class WSRRUtility {
 		// b9ef54b9-6e00-400c.acac.8aa4b98aacc2 no sicurezz
 		// 6657b666-f881-41fd.9363.835cb18363e2
 		// getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity
+		
+		String[] endpoints = wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("fe9d8efe-ee55-45df.bf31.441afe44318f", "Application", true, url, user, password);
 
+		int q=0;
+		
 		String dddd = WSRRUtility.getServ("SCHOSTServiceVersion");
 
 		String padded = String.format("%-20s", "123456");
@@ -45,6 +49,10 @@ public class WSRRUtility {
 		// wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("2c37de2c-a91d-4d08.a508.5a7f485a08d1",
 		// "Application", true,url, user, password);
 
+		System.out.println(">> tipologia bsruri : " + wsrrutility
+				.getServiceVersionTipologyBybsrURI("b19286b1-5786-4601.aee5.7573a775e5a6", url, user, password));
+		
+		
 		wsrrutility.isEndpointSecurityPresentByProviderBsrURI("6657b666-f881-41fd.9363.835cb18363e2", "SI-Datapowe",
 				url, user, password);
 
@@ -81,8 +89,7 @@ public class WSRRUtility {
 		System.out.println(">> sotto tipologia : "
 				+ wsrrutility.getServiceVersionSubTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
 
-		System.out.println(">> tipologia bsruri : " + wsrrutility
-				.getServiceVersionTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", url, user, password));
+
 
 		System.out.println(">> sotto tipologia bsruri : " + wsrrutility
 				.getServiceVersionSubTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", url, user, password));
@@ -3735,6 +3742,11 @@ public class WSRRUtility {
 		// 110117
 		String queryCALLABLE = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23CALLABLEServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
 
+		//24032017
+		String queryZRES = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23ZRESServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
+		String queryWOLA = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23WOLAServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
+		String querySHC  = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23SHCServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
+		
 		if (interfaceType.equals("REST"))
 			query = queryREST;
 		if (interfaceType.equals("SOAP"))
@@ -3746,6 +3758,13 @@ public class WSRRUtility {
 		// 110117
 		if (interfaceType.equals("CALLABLE"))
 			query = queryCALLABLE;
+		//24032017
+		if (interfaceType.equals("ZRES"))
+			query = queryZRES;
+		if (interfaceType.equals("WOLA"))
+			query = queryWOLA;
+		if (interfaceType.equals("SHC"))
+			query = querySHC;
 
 		query = query.replaceAll("%CATALOGNAME%", name);
 		query = query.replaceAll("%VERSION%", version);
@@ -4167,13 +4186,14 @@ public class WSRRUtility {
 			if (urlConnection != null)
 				urlConnection.disconnect();
 		}
-
-		if (data != null) {
-			JSONArray jsona1 = new JSONArray(data);
-			JSONArray jsona2 = (JSONArray) jsona1.get(0);
-			jso = (JSONObject) jsona2.get(0);
-			data = WSRRUtility.getValueFromJsonObject(jso, "value");
+					
+		if (data != null && !data.equals("[]")) {			//fix del 24032017 aggiunto controllo se risultato []			
+			JSONArray jsona1 = new JSONArray(data);			
+			JSONArray jsona2 = (JSONArray) jsona1.get(0);			
+			jso = (JSONObject) jsona2.get(0);			
+			data = WSRRUtility.getValueFromJsonObject(jso, "value");			
 		}
+		else data="[]";
 
 		return data;
 
@@ -4225,6 +4245,7 @@ public class WSRRUtility {
 				while ((ch = is.read()) != -1) {
 					sb.append((char) ch);
 				}
+				
 				data = new JSONArray(sb.toString());
 				is.close();
 			} else {
@@ -4284,7 +4305,8 @@ public class WSRRUtility {
 							enpointName = "";
 					}
 				}
-
+				
+				
 				if (c <= 9)
 					endpoints[c] = enpointName;
 
