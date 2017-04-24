@@ -21,6 +21,7 @@ public class WSRRUtility {
 		// Initialize the config variables for processing from the command line
 
 		WSRRUtility wsrrutility = new WSRRUtility();
+		
 
 		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
 		String user = "gabriele";
@@ -3419,6 +3420,143 @@ public class WSRRUtility {
 
 	}
 
+	//24042017
+	public JSONArray getObjectPropertiesDataFromGeneralQuery(String userquery, String queryString, String baseURL, String user,
+			String password) {
+
+		String properties = null;
+		JSONArray jsa = null;
+
+		// &p1=name
+
+		String query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[%BSRURI%]" + queryString;
+
+		query = query.replaceAll("%BSRURI%", userquery);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				properties = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		if (properties != null) {
+
+			jsa = new JSONArray(properties);
+
+		}
+		return jsa;
+
+	}
+	
+	//24042017
+	public String getDataFromGraphQuery(String userquery, String baseURL, String user,
+			String password) {
+
+		String graph = null;
+
+		// &p1=name
+
+		String query = "/Metadata/XML/GraphQuery?query=/WSRR/GenericObject[%BSRURI%]";
+
+		query = query.replaceAll("%BSRURI%", userquery);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				graph = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		return graph;
+
+	}
 	//
 	// Check is a object is of particular primarytype and name if so return
 	// jsonArray with selected properties
@@ -5024,7 +5162,89 @@ public class WSRRUtility {
 
 		return result;
 	}
+	
+    //24042017
+	public boolean updateEmptyRelationShip(String bsrURIToChange, String relationName, String createURL,
+			String user, String password) {
 
+		// Create the variable to return
+		boolean result = false;
+		/// Metadata/JSON/<bsrURI>/properties/Metadata/JSON/<bsrURI>/relationships
+		// String
+		/// value="[{\"delete\":\"false\",\"relationships\":[{\"name\":\"%RELATIONNAME%\",\"targetBsrURI\":\"%TARGETBSRURI%\"}]}]";
+		String query = "/Metadata/XML/%BSRURI%/relationships";
+
+		String value = "<relationships delete=\"false\"><relationship name=\"%RELATIONNAME%\" /></relationships>";
+
+		if (bsrURIToChange == null || bsrURIToChange.length() == 0)
+			bsrURIToChange = "bsrURI_not_Specified";
+		if (relationName == null || relationName.length() == 0)
+			relationName = "relationName_not_Specified";
+
+		query = query.replaceAll("%BSRURI%", bsrURIToChange);
+		value = value.replaceAll("%RELATIONNAME%", relationName);
+
+		HttpURLConnection urlConnection = null;
+		StringBuffer sb = new StringBuffer();
+		sb.append(createURL).append(query);
+		try {
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("PUT");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+
+			}
+
+			byte[] postDataBytes = value.getBytes("UTF-8");
+			urlConnection.getOutputStream().write(postDataBytes);
+
+			int returnCode = urlConnection.getResponseCode();
+
+			if (returnCode == 200 || (returnCode == 201)) {
+
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				result = true;
+				is.close();
+
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+				throw new Exception("Error: updateRelationShip " + stringBuffer.toString());
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		return result;
+	}
 	public boolean updateSinglePropertyJSONFormat(String bsrURIToChange, String propertyName, String propertyValue,
 			String createURL, String user, String password) {
 
