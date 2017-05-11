@@ -3,14 +3,10 @@ package com.isp.wsrr.utility;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,343 +14,13 @@ import org.json.JSONObject;
 public class WSRRUtility {
 
 	public static void main(String[] args) throws Exception {
-		// Initialize the config variables for processing from the command line
-
-		WSRRUtility wsrrutility = new WSRRUtility();
-		
-
-		String url = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
-		String user = "gabriele";
-		String password = "viviana";
-
-		System.out.println("azz");
-		String name = null;
-		JSONArray jsa = new JSONArray();
-		// temp_http://server:porta/PRODSIC01_Application
-
-		// 469ed046-8e38-4806.9289.6896c6688924 si sicurezza
-		// b9ef54b9-6e00-400c.acac.8aa4b98aacc2 no sicurezz
-		// 6657b666-f881-41fd.9363.835cb18363e2
-		// getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity
-		
-		String[] endpoints = wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("fe9d8efe-ee55-45df.bf31.441afe44318f", "Application", true, url, user, password);
-
-		int q=0;
-		
-		String dddd = WSRRUtility.getServ("SCHOSTServiceVersion");
-
-		String padded = String.format("%-20s", "123456");
-		String padded1 = String.format("%-20s", "ABCDE");
-		String union = padded + padded1 + "*";
-
-		// wsrrutility.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("2c37de2c-a91d-4d08.a508.5a7f485a08d1",
-		// "Application", true,url, user, password);
-
-		System.out.println(">> tipologia bsruri : " + wsrrutility
-				.getServiceVersionTipologyBybsrURI("b19286b1-5786-4601.aee5.7573a775e5a6", url, user, password));
-		
-		
-		wsrrutility.isEndpointSecurityPresentByProviderBsrURI("6657b666-f881-41fd.9363.835cb18363e2", "SI-Datapowe",
-				url, user, password);
-
-		// System.out.println("No DP " +
-		// wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(
-		// "b9ef54b9-6e00-400c.acac.8aa4b98aacc2", "Application", "SOAP", true,
-		// url, user, password));
-		// System.out.println("Si DP " +
-		// wsrrutility.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(
-		// "469ed046-8e38-4806.9289.6896c6688924", "Application", "SOAP", true,
-		// url, user, password));
-
-		//8fa8228f-22e3-439d.b25d.8cb5878c5dc7
-		wsrrutility.getServiceVersionSubTipologyBybsrURI("3813b938-ec58-48f5.b803.a3c3a1a303ee", url, user, password);
-		//wsrrutility.getClassificationRecord("8fa8228f-22e3-439d.b25d.8cb5878c5dc7", url, user, password);
-		// System.out.println("GL
-		// "+wsrrutility.getProducerFromEndpointByUriNoSecurity(".*TESTGAB",
-		// url, user, password));
-		
-		wsrrutility.getTargetWSRRFromBootstrapRuntime("LOOKUPWSRRKK", url, user, password);
-		System.out.println(wsrrutility.getProducerFromEndpointByUriFromProxyService(".*PRODSIC01_ciao", "SOAP", url,
-				user, password));
-
-		// SLD - input_00_CICS 1d2b071d-1db2-4291.878b.ee3e08ee8bd7
-
-		// sld 13c7c513-3bd7-47a5.b0da.e14503e1dadd -
-		// 46ba3546-780e-4e8f.b948.cf9d1fcf4878 consumer CONSUMATORE
-
-		// f5418df5-208f-4f61.b3db.6d4d246ddb51
-
-		System.out.println(">> tipologia : "
-				+ wsrrutility.getServiceVersionTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
-
-		System.out.println(">> sotto tipologia : "
-				+ wsrrutility.getServiceVersionSubTipologyByNameAndVersion("CUGNA10", "00", url, user, password));
-
-
-
-		System.out.println(">> sotto tipologia bsruri : " + wsrrutility
-				.getServiceVersionSubTipologyBybsrURI("f5418df5-208f-4f61.b3db.6d4d246ddb51", url, user, password));
-
-		System.out.println(">> " + wsrrutility.getSLAassociatedToSLDExtended("CONSUMATORE_", "00",
-				"13c7c513-3bd7-47a5.b0da.e14503e1dadd", url, user, password));
-
-		int gg = 0;
-
-		String qqq = wsrrutility.getGenericObjectByNameAndPrimaryType("SLD%20-%20ALPA_00_CICS",
-				"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ServiceLevelDefinition",
-				url, user, password);
-
-		qqq = wsrrutility.getGenericObjectByNameAndPrimaryTypeExtended("SLD%20-%20ALPA_00_CICS",
-				"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ServiceLevelDefinition",
-				url, user, password);
-
-		int g = 0;
-
-		String Pippo = wsrrutility.checkClassification("1d2b071d-1db2-4291.878b.ee3e08ee8bd7", "SLAActive", url, user,
-				password);
-
-		String[] SLAactivateTransaction = {
-		"http://www.ibm.com/xmlns/prod/serviceregistry/lifecycle/v6r3/LifecycleDefinition%23ActivateSLA" };
-
-		wsrrutility.changeGovernanceState("3f13353f-132f-4ff8.9b87.c2384dc28710", SLAactivateTransaction, url, user,
-				password);
-
-		Runtime.getRuntime().exit(0);
-
-		StringBuffer sb = new StringBuffer();
-		String sldProvider = sb.append("SLD%20-%20").append("input").append("_").append("00").append("_").append("CICS")
-				.toString();
-
-		String bsrURISLD = wsrrutility.getGenericObjectByNameAndPrimaryType(sldProvider,
-				"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ServiceLevelDefinition",
-				url, user, password);
-
-		// String endpointData = wsrrutility.getEndpointInfo("AMICO", "00",
-		// "CICS", "Application", url,
-		// user, password);
-		// 40725c40-a7fc-4c11.9f9a.b3245ab39aa4
-		// 46ba3546-780e-4e8f.b948.cf9d1fcf4878
-
-		// boolean result=wsrrutility.isSLDConsumedByService("j1000",
-		// "00","40725c40-a7fc-4c11.9f9a.b3245ab39aa4",url, user, password);
-
-		// bbba5abb-0ae3-432f.a1b8.501e5850b80e
-		// FINN0
-		// 00
-		// http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ApplicationVersion
-
-		System.out.println(">>> " + wsrrutility.getSLAassociatedToSLDWithPrimaryTypeExtended("FINN0", "00",
-				"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ApplicationVersion",
-				"bbba5abb-0ae3-432f.a1b8.501e5850b80e", url, user, password));
-
-		//////////////////////////
-		// jsa = new JSONArray(endpointData);
-		// String bsrURIEndpoint =
-		////////////////////////// WSRRUtility.getObjectValueFromJSONArrayData((JSONArray)
-		////////////////////////// jsa.get(0), "sm63_DATA_PRIMO_UTILIZZO");
-		//////////////////////////
-
-		int ea = 0;
-
-		http: // www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23BusinessApplication
-
-			// jsa=wsrrutility.getObjectPropertiesData("","&p1=name", url, user,
-			// password);
-
-			// jsa=wsrrutility.getEndpointInfoFromBsrUriCatalogAndEnvironment("dc9e1bdc-b933-43e3.93c1.bdff9abdc158",
-			// "Produzione", url, user, password);
-
-			System.out.println(jsa);
-
-		String ggg = wsrrutility.getGenericObjectByNameAndVersionAndPrimaryTypeExtended("0M", "00",
-				"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ApplicationVersion",
-				url, user, password);
-
-		int gt = 0;
-
-		String kkk = WSRRUtility.getObjectValueFromJSONArrayData((JSONArray) jsa.get(0), "sm63_DATA_ULTIMO_UTILIZZO");
-
-		int k2 = 0;
-
-		jsa = wsrrutility.getConsumersFromSLAGeneral("70bcd170-ee2b-4b35.927a.bfd1e2bf7a3c", url, user, password);
-
-		int k = 0;
-
-		System.out.println(jsa);
-		// name=getObjectValueFromJSONArrayEndpointData((JSONArray) jsa.get(0),
-		// "gep63_ATTIVATO_IN_PROD");
-		// name=getObjectValueFromJSONArrayEndpointData((JSONArray) jsa.get(0),
-		// "name");
-
-		jsa = wsrrutility.getAssociatedInterfaces("LOOKUPWSRR", "00", url, user, password);
-
-		name = getObjectValueFromJSONArrayData((JSONArray) jsa.get(0), "name");
-
-		String name1 = WSRRUtility.unescape(name);
-
-		System.out.println(name1);
-		/**
-		 * System.out.println(
-		 * ">>-------------------------------------------------------------------"
-		 * ); res = wsrrutility.getConsumersFromSLA(
-		 * "d81365d8-af29-490f.a935.24ed66243585", url, user, password);
-		 * 
-		 * System.out.println("Consumer - " + res);
-		 * 
-		 * res =
-		 * wsrrutility.getSLDFromSLA("d81365d8-af29-490f.a935.24ed66243585",
-		 * url, user, password);
-		 * 
-		 * System.out.println("SLD - " + res);
-		 * 
-		 * String provider = wsrrutility.getProviderFromSLD(res, url, user,
-		 * password);
-		 * 
-		 * System.out.println("Provider - " + provider);
-		 * 
-		 * res = wsrrutility.getServiceVersionClassification(provider, url,
-		 * user, password);
-		 * 
-		 * System.out.println("Type - " + res);
-		 * 
-		 * res =
-		 * wsrrutility.getOwningOrganizationFromGenericObjectByBsrUri(provider,
-		 * url, user, password);
-		 * 
-		 * if (res != null) { res = wsrrutility.getSSAFromAcronimo(res, url,
-		 * user, password);
-		 * 
-		 * System.out.println("SSA - " + res); } else {
-		 * 
-		 * System.out.println("SSA - " + " NON PRESENTE"); }
-		 * 
-		 **/
-		int a = 0;
-		a = a + 1;
-		/**
-		 * System.out.println(wsrrutility.
-		 * getGenericObjectByNameAndVersionAndPrimaryType("estate", "",
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ALEModel%23Organization",
-		 * url, user, password));
-		 * System.out.println(wsrrutility.getGenericObjectByNameAndPrimaryType(
-		 * "estate",
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ALEModel%23Organization",
-		 * url, user, password)); //esempio creazione Organizzazione String
-		 * xmlOrg=wsrrenvelopes.createOrganizationXMLData("THORGANIZATION4");
-		 * String response=wsrrutility.createWSRRGenericObject(xmlOrg, "POST",
-		 * url, user, password); System.out.println(response);
-		 * 
-		 * wsrrutility.deleteWSRRObject("fe7e88fe-e57e-4e90.b3aa.9ac90d9aaab2",
-		 * url, user, password);
-		 * 
-		 * //xmlOrg=wsrrenvelopes.createOrganizationXMLDataExtended("KKKKK",
-		 * "ZZZZZZZZ", null); //d7f160d7-939f-4f07.8859.f98fe8f9592e
-		 * 
-		 * xmlOrg=wsrrenvelopes.createOrganizationXMLDataExtended("VVVVVVVv",
-		 * "AAAAAAAAA", "d7f160d7-939f-4f07.8859.f98fe8f9592e");
-		 * 
-		 * response=wsrrutility.createWSRRGenericObject(xmlOrg, "POST", url,
-		 * user, password); System.out.println(response);
-		 * 
-		 * this.
-		 * 
-		 **/
-
-		/**
-		 * wsrrutility.serviceVersionwithNoOwningOrganization("SHOST", true,
-		 * url, user, password);
-		 * 
-		 * //wsrrutility.getGenericObjectByName("DIECI", url, user, password);
-		 * boolean result=wsrrutility.isSLDConsumedByService("DIECI", "00",
-		 * "e9475ae9-cfc7-4712.9f8e.5d6adc5d8e31",url, user, password);
-		 * System.out.println(result);
-		 * 
-		 * System.out.println(wsrrutility.getSLAAssociatedToSLD("DIECI", "00",
-		 * "e9475ae9-cfc7-4712.9f8e.5d6adc5d8e31", url, user, password));
-		 * System.out.println(wsrrutility.getSLAAssociatedToSLD("DIECI", "00",
-		 * "98d59998-78a1-4167.a4d1.8e1ab88ed132", url, user, password));
-		 * String[] transistions={
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/lifecycle/v6r3/LifecycleDefinition%23RequestSLA"
-		 * ,
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/lifecycle/v6r3/LifecycleDefinition%23ApproveSLARequest"
-		 * }; //wsrrutility.changeGovernanceState(
-		 * "01aafc01-df70-406d.b092.2945b42992bf", transistions, url, user,
-		 * password); String bsrURI=wsrrutility.getEndpointInfo("FORNITORE",
-		 * "00", "REST", "Application", url, user, password);
-		 * System.out.println("endpoint Info "+bsrURI); String
-		 * organization=wsrrutility.
-		 * getOrganizationFromGenericObjectByNameAndVersion("LOOKUPWSRR", "00",
-		 * url, user, password); System.out.println(organization); //boolean
-		 * updateBsrURI=wsrrutility.updateSinglePropertyXMLFormat(
-		 * "d1d31bd1-ca02-426d.8590.1588d51590e0", "gep63_DATA_PRIMO_UTILIZZO",
-		 * "IERI", url, user, password); boolean
-		 * updateBsrURI=wsrrutility.updateSinglePropertyXMLFormat(
-		 * "6f76546f-c30f-4f59.8c9d.16e66b169d86", "gep63_DATA_ULTIMO_UTILIZZO",
-		 * "20160615", url, user, password); System.out.println(updateBsrURI);
-		 * //updateBsrURI=wsrrutility.updateSinglePropertyJSONFormat(
-		 * "01aafc01-df70-406d.b092.2945b42992bf", "gpx63_RUNTIMEE", "N", url,
-		 * user, password); System.out.println(updateBsrURI);
-		 * wsrrutility.getGenericObjectByNameAndPrimaryType(
-		 * "SLD - FORNITORE_00_REST",
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel%23ServiceLevelDefinition",
-		 * url, user, password);
-		 * 
-		 * String[] SLDsubscribable = {
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/lifecycle/v6r3/LifecycleDefinition%23ProposeSpecification",
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/lifecycle/v6r3/LifecycleDefinition%23ApproveSpecification"
-		 * };
-		 * 
-		 * wsrrutility.changeGovernanceState(
-		 * "46ba3546-780e-4e8f.b948.cf9d1fcf4878", SLDsubscribable, url, user,
-		 * password);
-		 * 
-		 * System.out.println(wsrrutility.updateRelationShip(
-		 * "1a58301a-ed4d-4df0.b849.6db6886d492f", "gep63_consumes",
-		 * "e975f8e9-3c87-471e.a2e0.d6d5fcd6e0c8", url, user, password));
-		 * 
-		 * wsrrutility.getEndpointInfo("FORNITORE", "00", "REST", "Application",
-		 * url, user, password);
-		 * 
-		 * 
-		 * 
-		 * // SSA_GAB
-		 * 
-		 * String qui=
-		 * wsrrutility.getPropertyValueFromGenericObjectByName("SSA_GAB",
-		 * "&p1=description", url, user, password);
-		 * System.out.println("ciao"+WSRRUtility.extractPropertyValue(qui)+"io")
-		 * ; //e9475ae9-cfc7-4712.9f8e.5d6adc5d8e3
-		 * //98d59998-78a1-4167.a4d1.8e1ab88ed132
-		 * //System.out.println(wsrrutility.getGenericObjectByNameAndPrimaryType
-		 * ("THORGANIZATION2",
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ALEModel%23Organization"
-		 * ,url, user, password)); System.out.println(wsrrutility.
-		 * getChildOrganizationFromGenericObjectByName("SSA_GAB", url, user,
-		 * password));
-		 * 
-		 * //wsrrutility.getGenericObjectByNameAndPrimaryType("SSA_GAB",
-		 * "http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ALEModel%23Organization"
-		 * ,url, user, password);
-		 * 
-		 * wsrrutility.checkSSAAndAcronimoRelationShip("ACRONIMO_GAB",
-		 * "96b21496-67c3-4374.9b3a.72c777723a18",
-		 * "e8061fe8-b827-47c9.a280.1e99e71e80f8", url, user, password);
-		 **/
+		// void insert test here!!!!
 	}
 
 	public static String aboutLib() {
 
-		return "lib WSRREnvelopes & utility methods V3.0 September 2016";
+		return "lib WSRREnvelopes & utility methods V4.0 May 2017";
 
-		// aggiunta chiusure input stream in tutte le funzioni
-		// creata nuova funzione checkSSAAndAcronimoRelationShipVerbose (il
-		// messsaggio ritorna verboso) stampe SSA
-		// negli envelopes aggiunta la classificazione nella creazione della
-		// organizzazione createOrganizationXMLDataExtended
-		// aggiunta funzione: existObjectByNameAndVersionAndPrimaryType
-		// aggiunta getGenericObjectByNameAndPrimaryTypeExtended
-		// aggiunta getGenericObjectByNameAndVersionAndPrimaryTypeExtended
-		// aggiunta getManualMQEndpointInfo
 	}
 
 	private static String getValueFromJsonObject(JSONObject jso, String key) {
@@ -809,10 +475,10 @@ public class WSRRUtility {
 		return result;
 
 	}
-	
-	//** 19042017 sostituisce String getSLAassociatedToSLDExtended
-	public String getSLAassociatedToSLDExtendedNew(String consumerName, String consumerVersion, String bsrURISLDProvider,
-			String baseURL, String user, String password) {
+
+	// ** 19042017 sostituisce String getSLAassociatedToSLDExtended
+	public String getSLAassociatedToSLDExtendedNew(String consumerName, String consumerVersion,
+			String bsrURISLDProvider, String baseURL, String user, String password) {
 
 		// Create the variable to return
 		String bsrURI = null;
@@ -885,6 +551,7 @@ public class WSRRUtility {
 		return result;
 
 	}
+
 	/// in progress per ora non usata
 	public String getSLAassociatedToSLDExtended2(String slaName, String bsrURISLDProvider, String baseURL, String user,
 			String password) {
@@ -2241,16 +1908,16 @@ public class WSRRUtility {
 		JSONArray classificationRecord = null;
 
 		if (bsrURI != null) {
-			
+
 			classificationRecord = this.getClassificationRecord(bsrURI, baseURL, user, password);
 
 			if (classificationRecord != null && classificationRecord.length() != 0) {
-				
+
 				tipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
 
 						"http://www.ibm.com/xmlns/prod/serviceregistry/profile/v6r3/GovernanceEnablementModel");
-				
-				if (tipology != null && tipology.contains("ServiceVersion") ) {
+
+				if (tipology != null && tipology.contains("ServiceVersion")) {
 					tipology = tipology.substring(0, tipology.indexOf("ServiceVersion"));
 				}
 			}
@@ -2262,16 +1929,16 @@ public class WSRRUtility {
 	// metodo inserito il 21012017
 
 	public String getServiceVersionSubTipologyBybsrURI(String bsrURI, String baseURL, String user, String password) {
-		
+
 		String subtipology = null;
 		JSONArray classificationRecord = null;
 
 		if (bsrURI != null) {
 
 			classificationRecord = this.getClassificationRecord(bsrURI, baseURL, user, password);
-			
+
 			if (classificationRecord != null && classificationRecord.length() != 0) {
-				
+
 				subtipology = WSRRUtility.getObjectValueFromJSONArrayClassification(classificationRecord, "uri",
 
 						"http://isp/");
@@ -3420,9 +3087,9 @@ public class WSRRUtility {
 
 	}
 
-	//24042017
-	public JSONArray getObjectPropertiesDataFromGeneralQuery(String userquery, String queryString, String baseURL, String user,
-			String password) {
+	// 24042017
+	public JSONArray getObjectPropertiesDataFromGeneralQuery(String userquery, String queryString, String baseURL,
+			String user, String password) {
 
 		String properties = null;
 		JSONArray jsa = null;
@@ -3491,16 +3158,15 @@ public class WSRRUtility {
 		return jsa;
 
 	}
-	
-	//24042017
-	public String getDataFromGraphQuery(String userquery, String baseURL, String user,
-			String password) {
+
+	// 24042017
+	public String getDataFromGraphQuery(String userquery, String baseURL, String user, String password) {
 
 		String graph = null;
 
 		// &p1=name
 
-		String query = "/Metadata/XML/GraphQuery?query=/WSRR/GenericObject[%BSRURI%]";
+		String query = "/Metadata/JSON/GraphQuery?query=/WSRR/GenericObject[%BSRURI%]";
 
 		query = query.replaceAll("%BSRURI%", userquery);
 
@@ -3935,10 +3601,11 @@ public class WSRRUtility {
 
 	}
 
-	public String getEndpointInfo(String name, String version, String interfaceType, String environment, String baseURL,
-			String user, String password) {
+	// 11052017 aggiungo la gestione della specializzazione dell' endpoint
 
-		// Create the variable to return
+	public String getEndpointInfo(String name, String version, String interfaceType, String environment,
+			String specializzazione, String baseURL, String user, String password) {
+
 		String data = null;
 		String query = null;
 		String environmentQuery = "http://www.ibm.com/xmlns/prod/serviceregistry/6/1/GovernanceProfileTaxonomy%23%ENVIRONMENT%";
@@ -3947,19 +3614,19 @@ public class WSRRUtility {
 		if (version == null || version.length() == 0)
 			version = "00";
 
-		String querySOAP = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23SOAPServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
-		String queryREST = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/profile/v8r0/RESTModel%23RESTServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
+		String querySOAP = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23SOAPServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
+		String queryREST = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/profile/v8r0/RESTModel%23RESTServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
 
-		String queryCICS = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23CICSServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
-		String queryMQ = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23MQServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
+		String queryCICS = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23CICSServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
+		String queryMQ = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23MQServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
 		// 110117
-		String queryCALLABLE = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23CALLABLEServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
+		String queryCALLABLE = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23CALLABLEServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
 
-		//24032017
-		String queryZRES = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23ZRESServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
-		String queryWOLA = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23WOLAServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
-		String querySHC  = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23SHCServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO";
-		
+		// 24032017
+		String queryZRES = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23ZRESServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
+		String queryWOLA = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23WOLAServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
+		String querySHC = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%']/gep63_provides(.)/gep63_availableEndpoints(.)[exactlyClassifiedByAllOf(.,'http://www.ibm.com/xmlns/prod/serviceregistry/v6r3/ServiceModel%23SHCServiceEndpoint')%20and%20exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=sm63_DATA_PRIMO_UTILIZZO&p3=sm63_SPECIALIZZAZIONE";
+
 		if (interfaceType.equals("REST"))
 			query = queryREST;
 		if (interfaceType.equals("SOAP"))
@@ -3971,7 +3638,7 @@ public class WSRRUtility {
 		// 110117
 		if (interfaceType.equals("CALLABLE"))
 			query = queryCALLABLE;
-		//24032017
+		// 24032017
 		if (interfaceType.equals("ZRES"))
 			query = queryZRES;
 		if (interfaceType.equals("WOLA"))
@@ -4039,11 +3706,35 @@ public class WSRRUtility {
 
 		// [{"value":"bc8f48bc-d1ab-4b30.9543.876ea38743a1","name":"bsrURI"},{"value":null,"name":"gep63_DATA_PRIMO_UTILIZZO"}]]
 
+		String result = null;
+
 		if (data != null && data.equals("[]"))
-			data = null;
+			result = null;
+		else {
+			if (specializzazione == null)
+				specializzazione = "";
 
-		return data;
-
+			JSONArray jsa = new JSONArray(data);
+			JSONArray jsae = null;
+			JSONObject jso = null;
+			int countEP = 0;
+			int i = jsa.length();
+			int j = 0;
+			String specializzazione_ = null;
+			while (i > j) {
+				jsae = (JSONArray) jsa.getJSONArray(j);
+				specializzazione_ = WSRRUtility.getObjectValueFromJSONArrayData(jsae, "sm63_SPECIALIZZAZIONE");
+				if (specializzazione_ != null && (specializzazione_.equals(specializzazione))) {
+					countEP++;
+					result = jsae.toString();
+				}
+				j++;
+			}
+			if (countEP != 1)
+				result = null; // if more endpoint with same SPECIALIZZAZIONE
+								// result=null
+		}
+		return result;
 	}
 
 	// utilizzata nella funzione caricamento SLA
@@ -4271,7 +3962,7 @@ public class WSRRUtility {
 			String localUri = null;
 			String sicurezza = null;
 			String endpointName = null;
-			int c=0;
+			int c = 0;
 
 			for (int i = 0; i < jsa.length(); i++) {
 				jsaint = jsa.getJSONArray(i);
@@ -4299,25 +3990,25 @@ public class WSRRUtility {
 							endpointName = "";
 					}
 				}
-				
+
 				if (security) {
 					if (sicurezza != null && !sicurezza.equals("NO")) {
-	                 endpointName = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, interfaceType, baseURL,
-								user, password);
-						if (c<=9) {
-							endpoints[c]=endpointName;
+						endpointName = this.getProxyEndpointNameFromEndpointFilteredByInterface(localUri, interfaceType,
+								baseURL, user, password);
+						if (c <= 9) {
+							endpoints[c] = endpointName;
 							c++;
-						}	                 
+						}
 					}
-					
+
 				} else {
-					
-					if (c<=9) {
-						endpoints[c]=endpointName;
+
+					if (c <= 9) {
+						endpoints[c] = endpointName;
 						c++;
 					}
 				}
-				
+
 			}
 
 		}
@@ -4399,14 +4090,15 @@ public class WSRRUtility {
 			if (urlConnection != null)
 				urlConnection.disconnect();
 		}
-					
-		if (data != null && !data.equals("[]")) {			//fix del 24032017 aggiunto controllo se risultato []			
-			JSONArray jsona1 = new JSONArray(data);			
-			JSONArray jsona2 = (JSONArray) jsona1.get(0);			
-			jso = (JSONObject) jsona2.get(0);			
-			data = WSRRUtility.getValueFromJsonObject(jso, "value");			
-		}
-		else data="[]";
+
+		if (data != null && !data.equals("[]")) { // fix del 24032017 aggiunto
+													// controllo se risultato []
+			JSONArray jsona1 = new JSONArray(data);
+			JSONArray jsona2 = (JSONArray) jsona1.get(0);
+			jso = (JSONObject) jsona2.get(0);
+			data = WSRRUtility.getValueFromJsonObject(jso, "value");
+		} else
+			data = "[]";
 
 		return data;
 
@@ -4458,7 +4150,7 @@ public class WSRRUtility {
 				while ((ch = is.read()) != -1) {
 					sb.append((char) ch);
 				}
-				
+
 				data = new JSONArray(sb.toString());
 				is.close();
 			} else {
@@ -4518,8 +4210,7 @@ public class WSRRUtility {
 							enpointName = "";
 					}
 				}
-				
-				
+
 				if (c <= 9)
 					endpoints[c] = enpointName;
 
@@ -4631,10 +4322,10 @@ public class WSRRUtility {
 		return result;
 
 	}
-    //03022017
-	
-	public String getTargetWSRRFromBootstrapRuntime(String catalogQuery, String baseURL,
-			String user, String password) throws Exception {
+	// 03022017
+
+	public String getTargetWSRRFromBootstrapRuntime(String catalogQuery, String baseURL, String user, String password)
+			throws Exception {
 
 		// Create the variable to return
 		String data = null;
@@ -4701,11 +4392,11 @@ public class WSRRUtility {
 			JSONObject jso = (JSONObject) jsona2.get(0);
 			data = WSRRUtility.getValueFromJsonObject(jso, "value");
 		}
-		
+
 		return data;
 
 	}
-	
+
 	public JSONArray getEndpointInfoFromInterface(String bsrURI, String environment, String baseURL, String user,
 			String password) {
 
@@ -5162,10 +4853,10 @@ public class WSRRUtility {
 
 		return result;
 	}
-	
-    //24042017
-	public boolean updateEmptyRelationShip(String bsrURIToChange, String relationName, String createURL,
-			String user, String password) {
+
+	// 24042017
+	public boolean updateEmptyRelationShip(String bsrURIToChange, String relationName, String createURL, String user,
+			String password) {
 
 		// Create the variable to return
 		boolean result = false;
@@ -5245,6 +4936,7 @@ public class WSRRUtility {
 
 		return result;
 	}
+
 	public boolean updateSinglePropertyJSONFormat(String bsrURIToChange, String propertyName, String propertyValue,
 			String createURL, String user, String password) {
 
@@ -5301,7 +4993,9 @@ public class WSRRUtility {
 				is.close();
 
 			} else {
-				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				// BufferedReader reader = new BufferedReader(new
+				// InputStreamReader(urlConnection.getInputStream()));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getErrorStream()));
 				StringBuffer stringBuffer = new StringBuffer();
 				String line = null;
 				while (null != (line = reader.readLine())) {
