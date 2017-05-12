@@ -15,6 +15,16 @@ public class WSRRUtility {
 
 	public static void main(String[] args) throws Exception {
 		// void insert test here!!!!
+		String wsrr = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
+
+		WSRRUtility wut = new WSRRUtility();
+		//wut.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity("98d59998-78a1-4167.a4d1.8e1ab88ed132", "Application",
+		//		"REST", false, "KLL", wsrr, "gabriele", "viviana");
+		
+		wut.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("16b34f16-0f2d-4d1f.907a.2b56db2b7a4c", "Application",
+				 false,"K1", wsrr, "gabriele", "viviana");
+		
+		
 	}
 
 	public static String aboutLib() {
@@ -3732,7 +3742,7 @@ public class WSRRUtility {
 			}
 			if (countEP != 1)
 				result = null; // if more endpoint with same SPECIALIZZAZIONE
-								// result=null
+			// result=null
 		}
 		return result;
 	}
@@ -3885,9 +3895,10 @@ public class WSRRUtility {
 	}
 
 	// 03022017
-
+    // 12052017 aggiunta la gestione della specializzazione
 	public String[] getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity(String bsrURI, String environment,
-			String interfaceType, boolean security, String baseURL, String user, String password) throws Exception {
+			String interfaceType, boolean security, String specializzazione, String baseURL, String user,
+			String password) throws Exception {
 
 		// Create the variable to return
 		String data = null;
@@ -3897,9 +3908,12 @@ public class WSRRUtility {
 		String environmentQuery = "http://www.ibm.com/xmlns/prod/serviceregistry/6/1/GovernanceProfileTaxonomy%23%ENVIRONMENT%";
 		environmentQuery = environmentQuery.replaceAll("%ENVIRONMENT%", environment);
 
-		query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_availableEndpoints()[exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=name&p3=sm63_USO_SICUREZZA";
+		query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_availableEndpoints()[exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=name&p3=sm63_USO_SICUREZZA&p4=sm63_SPECIALIZZAZIONE";
 		query = query.replaceAll("%BSRURI%", bsrURI);
 		query = query.replaceAll("%ENVIRONMENT%", environmentQuery);
+
+		if (specializzazione == null)
+			specializzazione = "";
 
 		HttpURLConnection urlConnection = null;
 
@@ -3957,6 +3971,7 @@ public class WSRRUtility {
 			JSONArray jsa = new JSONArray(data);
 
 			JSONArray jsaint = null;
+			JSONArray jsaintCurrent = null;
 			JSONObject jso = null;
 
 			String localUri = null;
@@ -3964,10 +3979,41 @@ public class WSRRUtility {
 			String endpointName = null;
 			int c = 0;
 
+			String specializzazione_ = null;
+			int specializzazioneCount = 0;
+
+			// ciclo per recuperare l'array con la specializzazione
+
 			for (int i = 0; i < jsa.length(); i++) {
 				jsaint = jsa.getJSONArray(i);
 				for (int ii = 0; ii < jsaint.length(); ii++) {
 					jso = (JSONObject) jsaint.get(ii);
+
+					if (jso.getString("name").equals("sm63_SPECIALIZZAZIONE")) {
+						if (!jso.isNull("value"))
+							specializzazione_ = (String) jso.get("value");
+						else
+							specializzazione_ = "";
+
+						if (specializzazione_.equals(specializzazione)) {
+							specializzazioneCount++;
+							jsaintCurrent = jsaint;
+						}
+					}
+
+				}
+			}
+
+			if (specializzazioneCount >= 2) {
+				// trovati piu' EP con stessa specializzazione , lancio
+				// eccezione
+				throw new Exception(
+						"errore: in getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity endpoint incongruente");
+			}
+
+			if (jsaintCurrent != null) {
+				for (int ii = 0; ii < jsaintCurrent.length(); ii++) {
+					jso = (JSONObject) jsaintCurrent.get(ii);
 
 					if (jso.getString("name").equals("bsrURI")) {
 						localUri = (String) jso.getString("value");
@@ -3989,6 +4035,7 @@ public class WSRRUtility {
 						else
 							endpointName = "";
 					}
+
 				}
 
 				if (security) {
@@ -4010,7 +4057,6 @@ public class WSRRUtility {
 				}
 
 			}
-
 		}
 		return endpoints;
 
@@ -4092,7 +4138,7 @@ public class WSRRUtility {
 		}
 
 		if (data != null && !data.equals("[]")) { // fix del 24032017 aggiunto
-													// controllo se risultato []
+			// controllo se risultato []
 			JSONArray jsona1 = new JSONArray(data);
 			JSONArray jsona2 = (JSONArray) jsona1.get(0);
 			jso = (JSONObject) jsona2.get(0);
@@ -4105,8 +4151,9 @@ public class WSRRUtility {
 	}
 
 	// 03022017
+	// 12052017 aggiunta la gestione della specializzazione
 	public String[] getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity(String bsrURI, String environment,
-			boolean security, String baseURL, String user, String password) throws Exception {
+			boolean security,String specializzazione, String baseURL, String user, String password) throws Exception {
 
 		// Create the variable to return
 		JSONArray data = null;
@@ -4117,9 +4164,12 @@ public class WSRRUtility {
 		String environmentQuery = "http://www.ibm.com/xmlns/prod/serviceregistry/6/1/GovernanceProfileTaxonomy%23%ENVIRONMENT%";
 		environmentQuery = environmentQuery.replaceAll("%ENVIRONMENT%", environment);
 
-		query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_provides()/gep63_availableEndpoints()[exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=name&p3=sm63_USO_SICUREZZA";
+		query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@bsrURI='%BSRURI%']/gep63_provides()/gep63_availableEndpoints()[exactlyClassifiedByAllOf(.,'%ENVIRONMENT%')]&p1=bsrURI&p2=name&p3=sm63_USO_SICUREZZA&p4=sm63_SPECIALIZZAZIONE";
 		query = query.replaceAll("%BSRURI%", bsrURI);
 		query = query.replaceAll("%ENVIRONMENT%", environmentQuery);
+		
+		if (specializzazione == null)
+			specializzazione = "";
 
 		HttpURLConnection urlConnection = null;
 
@@ -4177,17 +4227,48 @@ public class WSRRUtility {
 
 			JSONArray jsaint = null;
 			JSONObject jso = null;
-
+			JSONArray jsaintCurrent = null;
 			String localUri = null;
 			String sicurezza = null;
 			String enpointName = null;
 			boolean withproxy = false;
 			int c = 0;
+			
+			String specializzazione_ = null;
+			int specializzazioneCount = 0;
+
+			// ciclo per recuperare l'array con la specializzazione
 
 			for (int i = 0; i < data.length(); i++) {
 				jsaint = data.getJSONArray(i);
 				for (int ii = 0; ii < jsaint.length(); ii++) {
 					jso = (JSONObject) jsaint.get(ii);
+
+					if (jso.getString("name").equals("sm63_SPECIALIZZAZIONE")) {
+						if (!jso.isNull("value"))
+							specializzazione_ = (String) jso.get("value");
+						else
+							specializzazione_ = "";
+
+						if (specializzazione_.equals(specializzazione)) {
+							specializzazioneCount++;
+							jsaintCurrent = jsaint;
+						}
+					}
+
+				}
+			}
+
+			if (specializzazioneCount >= 2) {
+				// trovati piu' EP con stessa specializzazione , lancio
+				// eccezione
+				throw new Exception(
+						"errore: in getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity endpoint incongruente");
+			}
+
+			if (jsaintCurrent != null) {
+				for (int ii = 0; ii < jsaintCurrent.length(); ii++) {
+					jso = (JSONObject) jsaintCurrent.get(ii);
 
 					if (jso.getString("name").equals("bsrURI")) {
 						localUri = (String) jso.getString("value");
