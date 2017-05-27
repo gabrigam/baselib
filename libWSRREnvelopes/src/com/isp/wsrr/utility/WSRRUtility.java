@@ -492,6 +492,7 @@ public class WSRRUtility {
 	}
 
 	// ** 19042017 sostituisce String getSLAassociatedToSLDExtended
+	//23052017 per ora non usato da testare
 	public String getSLAassociatedToSLDExtendedNew(String consumerName, String consumerVersion,
 			String bsrURISLDProvider, String baseURL, String user, String password) {
 
@@ -537,6 +538,8 @@ public class WSRRUtility {
 					sb.append((char) ch);
 				}
 				bsrURI = sb.toString();
+				result=bsrURI;
+				
 				is.close();
 			} else {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -658,6 +661,91 @@ public class WSRRUtility {
 
 	}
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// ** 23052017 metodo ottimizzato similmente a getSLAassociatedToSLDExtendedNew  //non funziona
+	
+	public String getSLAassociatedToSLDWithPrimaryTypeExtendedFake(String consumerName, String consumerVersion,String primaryType,
+			String bsrURISLDProvider, String baseURL, String user, String password) {
+
+		// Create the variable to return
+		String bsrURI = null;
+		String result = null;
+		String query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@name='%CATALOGNAME%'%20and%20@version='%VERSION%'%20and%20@primaryType='%PRIMARYTYPE%']/gep63_consumes(.)/gep63_agreedEndpoints(.)[@bsrURI='%BSRURISLDPROVIDER%']&p1=bsrURI";
+
+		if (consumerVersion == null || consumerVersion.length() == 0)
+			consumerVersion = "00";
+
+		query = query.replaceAll("%CATALOGNAME%", consumerName);
+		query = query.replaceAll("%VERSION%", consumerVersion);
+		query = query.replaceAll("%BSRURISLDPROVIDER%", bsrURISLDProvider);
+		query = query.replaceAll("%PRIMARYTYPE%", primaryType);
+
+		System.out.println(">>>>>>>>>>>>>>>>>>> "+query);
+		
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				bsrURI = sb.toString();
+				
+				System.out.println(">>>>>>>>>>>>>>>>>>> "+bsrURI);
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			bsrURI = ">>**ERROR**>>" + e.getMessage();
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		if (bsrURI != null && !bsrURI.contains(">>**ERROR**>>")) {
+			if (bsrURI != null && bsrURI.equals("[]"))
+				result = null;
+		}
+
+		return result;
+
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public String getSLAassociatedToSLDWithPrimaryTypeExtended(String consumerName, String consumerVersion,
 			String primaryType, String bsrURISLDProvider, String baseURL, String user, String password) {
 
@@ -3821,7 +3909,8 @@ public class WSRRUtility {
 				result = null; // if more endpoint with same SPECIALIZZAZIONE
 			// result=null
 		}
-		return result;
+		if (result != null) result="["+result+"]"; //23052017  forzo array quindi aggiungo []
+		return result; 
 	}
 
 	// utilizzata nella funzione caricamento SLA
