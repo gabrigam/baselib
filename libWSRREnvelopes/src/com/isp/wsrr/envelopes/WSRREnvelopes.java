@@ -27,6 +27,8 @@ import teamworks.TWList;
 //25/10/2016 pubblicatore e data
 //09/12/2016 PROPERTY_GPX63_USERDEFTIME inserito nuovo campo nella creazione SLA
 //15032017 aggiunti campi alla AV per aderire al modello
+//03/02/2018 aggiunti gep63_SOPEN_ABILITAZ_READ - gep63_SOPEN_ABILITAZ_WRITE - gep63_SOPEN_MOD_UTENTI_BUS
+//28/02/2018 aggiunto gep63_SCHOST_ACRONIMO_RTC
 public class WSRREnvelopes {
 
 	public WSRREnvelopes() {
@@ -335,6 +337,8 @@ public class WSRREnvelopes {
 	}
 
 	//25/10/2016 aggiunti gep63_DATA_PUBBLICAZIONE e gep63_PUBBLICATORE_SERV e i dati x reps0
+	//03/02/2018 aggiunti gep63_SOPEN_ABILITAZ_READ - gep63_SOPEN_ABILITAZ_WRITE - gep63_SOPEN_MOD_UTENTI_BUS
+	//28/02/2018 aggiunto gep63_SCHOST_ACRONIMO_RTC
 	public String createApplicationVersionXMLData(String name, String bsrUriOrganization) {
 
 		String output = null;
@@ -404,6 +408,15 @@ public class WSRREnvelopes {
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_NOME_SERVIZIO_PRECEDENTE", EMPTY_STRING));
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_TIPOLOGIA_OGGETTO_ESISTENTE", EMPTY_STRING));
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_DOC_ANALISI_DETTAGLIO", EMPTY_STRING));
+			
+			//03022018
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SOPEN_ABILITAZ_READ",EMPTY_STRING ));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SOPEN_ABILITAZ_WRITE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SOPEN_MOD_UTENTI_BUS", EMPTY_STRING));
+			
+			//28022018
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SCHOST_ACRONIMO_RTC", EMPTY_STRING));
+			
 			
 			propertiesElement.appendChild(
 					createPropertyElement(document, PropertyConstants.PRIMARY_TYPE, OWL_BUSINESS_APPLICATION_VERSION));
