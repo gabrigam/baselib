@@ -21,20 +21,13 @@ public class WSRRUtility {
 		double difference = (end_time - start_time)/1e6;
 		// void insert test here!!!!
 		String wsrr = "https://WIN-MT67KKLQ7LO:9443/WSRR/8.5";
-
 		WSRRUtility wut = new WSRRUtility();
-		//wut.getEndpointNameFromBsrUriSLDEnvironmentCheckSecurity("98d59998-78a1-4167.a4d1.8e1ab88ed132", "Application",
-		//		"REST", false, "KLL", wsrr, "gabriele", "viviana");
-		
-		wut.getEndpointNameFromBsrUriCatalogAndEnvironmentCheckSecurity("16b34f16-0f2d-4d1f.907a.2b56db2b7a4c", "Application",
-				 false,"K1", wsrr, "gabriele", "viviana");
-		
 		
 	}
 
 	public static String aboutLib() {
 
-		return "lib WSRREnvelopes & utility methods V4.0 May 2017";
+		return "lib WSRREnvelopes & utility methods V4.1 Feb 2018";
 
 	}
 
@@ -3056,6 +3049,74 @@ public class WSRRUtility {
 
 		String query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@primaryType='%PRIMARYTYPE%']&p1=bsrURI";
 
+		query = query.replaceAll("%PRIMARYTYPE%", primaryType);
+
+		HttpURLConnection urlConnection = null;
+
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append(baseURL).append(query);
+			URL url = new URL(sb.toString());
+			urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+			urlConnection.setUseCaches(false);
+
+			if (user != null && password != null) {
+
+				String userPassword = user + ":" + password;
+
+				String encoding = new String(Base64.encodeBase64(userPassword.getBytes()));
+
+				urlConnection.setRequestProperty("Authorization", "Basic " + encoding);
+			}
+
+			int responsecode = urlConnection.getResponseCode();
+			if (responsecode == 200 || (responsecode == 201)) {
+				InputStream is = null;
+				is = urlConnection.getInputStream();
+				int ch;
+				sb.delete(0, sb.length());
+				while ((ch = is.read()) != -1) {
+					sb.append((char) ch);
+				}
+				resultdata = sb.toString();
+				is.close();
+			} else {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+				StringBuffer stringBuffer = new StringBuffer();
+				String line = null;
+				while (null != (line = reader.readLine())) {
+					stringBuffer.append(line);
+				}
+				reader.close();
+			}
+			urlConnection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			if (urlConnection != null)
+				urlConnection.disconnect();
+		}
+
+		JSONArray jsa = new JSONArray(resultdata);
+
+		return jsa;
+
+	}
+	
+	//090218
+	public JSONArray getAllObjectsSpecifiedByPrimaryTypeNameandVersion(String primaryType,String name,String version, String baseURL, String user,
+			String password) {
+
+		String resultdata = null;
+
+		String query = "/Metadata/JSON/PropertyQuery?query=/WSRR/GenericObject[@primaryType='%PRIMARYTYPE%'%20and%20@name='%NAME%'%20and%20@version='%VERSION%']&p1=bsrURI";
+
+		query = query.replaceAll("%NAME%", name);
+		query = query.replaceAll("%VERSION%", version);
 		query = query.replaceAll("%PRIMARYTYPE%", primaryType);
 
 		HttpURLConnection urlConnection = null;
