@@ -29,6 +29,7 @@ import teamworks.TWList;
 //15032017 aggiunti campi alla AV per aderire al modello
 //03/02/2018 aggiunti gep63_SOPEN_ABILITAZ_READ - gep63_SOPEN_ABILITAZ_WRITE - gep63_SOPEN_MOD_UTENTI_BUS
 //28/02/2018 aggiunto gep63_SCHOST_ACRONIMO_RTC
+//05/06/2018 aggiunti i tre campi: gep63_CAT_SERVIZIO - gep63_CAT_INPUT - gep63_CAT_OUTPUT
 public class WSRREnvelopes {
 
 	public WSRREnvelopes() {
@@ -339,6 +340,7 @@ public class WSRREnvelopes {
 	//25/10/2016 aggiunti gep63_DATA_PUBBLICAZIONE e gep63_PUBBLICATORE_SERV e i dati x reps0
 	//03/02/2018 aggiunti gep63_SOPEN_ABILITAZ_READ - gep63_SOPEN_ABILITAZ_WRITE - gep63_SOPEN_MOD_UTENTI_BUS
 	//28/02/2018 aggiunto gep63_SCHOST_ACRONIMO_RTC
+	//05/06/2018 aggiunti i tre campi: gep63_CAT_SERVIZIO - gep63_CAT_INPUT - gep63_CAT_OUTPUT
 	public String createApplicationVersionXMLData(String name, String bsrUriOrganization) {
 
 		String output = null;
@@ -416,6 +418,11 @@ public class WSRREnvelopes {
 			
 			//28022018
 			propertiesElement.appendChild(createPropertyElement(document, "gep63_SCHOST_ACRONIMO_RTC", EMPTY_STRING));
+			
+			//05062018
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_CAT_SERVIZIO", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_CAT_INPUT", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_CAT_OUTPUT", EMPTY_STRING));
 			
 			
 			propertiesElement.appendChild(
