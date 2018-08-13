@@ -30,6 +30,7 @@ import teamworks.TWList;
 //03/02/2018 aggiunti gep63_SOPEN_ABILITAZ_READ - gep63_SOPEN_ABILITAZ_WRITE - gep63_SOPEN_MOD_UTENTI_BUS
 //28/02/2018 aggiunto gep63_SCHOST_ACRONIMO_RTC
 //05/06/2018 aggiunti i tre campi: gep63_CAT_SERVIZIO - gep63_CAT_INPUT - gep63_CAT_OUTPUT
+//20/06/2018 (non sono sicuro x la data) creato createApplicationVersionXMLDataCanale(speculare a createApplicationVersionXMLData)
 public class WSRREnvelopes {
 
 	public WSRREnvelopes() {
@@ -481,6 +482,158 @@ public class WSRREnvelopes {
 		return output;
 	}
 
+	//25/10/2016 aggiunti gep63_DATA_PUBBLICAZIONE e gep63_PUBBLICATORE_SERV e i dati x reps0
+	//03/02/2018 aggiunti gep63_SOPEN_ABILITAZ_READ - gep63_SOPEN_ABILITAZ_WRITE - gep63_SOPEN_MOD_UTENTI_BUS
+	//28/02/2018 aggiunto gep63_SCHOST_ACRONIMO_RTC
+	//05/06/2018 aggiunti i tre campi: gep63_CAT_SERVIZIO - gep63_CAT_INPUT - gep63_CAT_OUTPUT
+	
+	//questo metodo è speculare a createApplicationVersionXMLData
+	
+	public String createApplicationVersionXMLDataCanale(String name, String bsrUriOrganization,String descrizione) {
+
+		String output = null;
+
+		try {
+			try {
+				docBuilderFactory = DocumentBuilderFactory.newInstance();
+				docBuilder = docBuilderFactory.newDocumentBuilder();
+
+				XPathFactory xPathFactory = XPathFactory.newInstance();
+				XPath xPath = xPathFactory.newXPath();
+				valueAttrExpression = xPath.compile(XPATH_EXPR_VALUE_ATTR);
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+				throw e;
+			} catch (XPathExpressionException e) {
+				e.printStackTrace();
+				throw e;
+			}
+
+			Document document = docBuilder.newDocument();
+
+			Element resourcesElement = document.createElement(ELEMENT_RESOURCES);
+			document.appendChild(resourcesElement);
+
+			Element resourceElement = document.createElement(ELEMENT_RESOURCE);
+			resourcesElement.appendChild(resourceElement);
+
+			Element propertiesElement = document.createElement(ELEMENT_PROPERTIES);
+			resourceElement.appendChild(propertiesElement);
+
+			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.NAME, name));
+			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.NAMESPACE, ""));
+			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.VERSION, "00"));
+			propertiesElement.appendChild(createPropertyElement(document, PropertyConstants.DESCRIPTION, descrizione));
+
+			//12017 allineati i campi al nuovo modello
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DESC_ESTESA", EMPTY_STRING));
+			propertiesElement
+					.appendChild(createPropertyElement(document, "gep63_DOC_ANALISI_FUNZIONALE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DOC_ANALISI_TECNICA", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_ULTIMO_UTILIZZO", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_ATTIVATO_IN_PROD", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_PID_PROCESSO_GOV", EMPTY_STRING));
+
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_ATTIVATO_IN_APPL", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_ATTIVATO_IN_SYST", EMPTY_STRING));
+			
+			//capability version
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_ABILITAZ_INFRASTR",EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_FLG_CTRL_TIPOLOGIA",EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_UTILIZ_PIU_BAN_CLONI", EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_DISP_SERV", EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_VINCOLI_RIUSO", EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_INFO_COSTO", EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_PIATT_EROG", EMPTY_STRING));
+            propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_RITIRO_SERV",EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_RICH_MODIFICA",EMPTY_STRING ));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_RICH_CREAZIONE",EMPTY_STRING ));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DATA_PUBBL_CREAZ_SERV", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_MATR_PUBBLICATORE_CREAZ_SERV", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_TIPOLOGIA", EMPTY_STRING));
+			
+			//15032017
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DERIVANTE_DA_ALTRI_SERV",EMPTY_STRING ));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SECURITY_ROLE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_NOME_SERVIZIO_PRECEDENTE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_TIPOLOGIA_OGGETTO_ESISTENTE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_DOC_ANALISI_DETTAGLIO", EMPTY_STRING));
+			
+			//03022018
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SOPEN_ABILITAZ_READ",EMPTY_STRING ));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SOPEN_ABILITAZ_WRITE", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SOPEN_MOD_UTENTI_BUS", EMPTY_STRING));
+			
+			//28022018
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_SCHOST_ACRONIMO_RTC", EMPTY_STRING));
+			
+			//05062018
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_CAT_SERVIZIO", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_CAT_INPUT", EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, "gep63_CAT_OUTPUT", EMPTY_STRING));
+			
+			
+			propertiesElement.appendChild(
+					createPropertyElement(document, PropertyConstants.PRIMARY_TYPE, OWL_BUSINESS_APPLICATION_VERSION));
+
+			propertiesElement.appendChild(createPropertyElement(document, PROPERTY_ALE63_ASSET_WEB_LINK, EMPTY_STRING));
+			propertiesElement
+					.appendChild(createPropertyElement(document, PROPERTY_ALE63_FULL_DESCRIPTION, EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, PROPERTY_ALE63_REMOTE_STATE, EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, PROPERTY_ALE63_ASSET_TYPE, EMPTY_STRING));
+			propertiesElement
+					.appendChild(createPropertyElement(document, PROPERTY_ALE63_REQUIREMENTS_LINK, EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, PROPERTY_ALE63_OWNER_EMAIL, EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, PROPERTY_ALE63_GUID, EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, PROPERTY_ALE63_COMMUNITY_NAME, EMPTY_STRING));
+			propertiesElement.appendChild(createPropertyElement(document, PROPERTY_ALE63_ASSET_OWNERS, EMPTY_STRING));
+			propertiesElement
+					.appendChild(createPropertyElement(document, PROPERTY_GEP63_CONSUMER_IDENTIFIER, EMPTY_STRING));
+			propertiesElement.appendChild(
+					createPropertyElement(document, PROPERTY_GEP63_VERSION_AVAILABILITY_DATE, EMPTY_STRING));
+			propertiesElement.appendChild(
+					createPropertyElement(document, PROPERTY_GEP63_VERSION_TERMINATION_DATE, EMPTY_STRING));
+
+			// Relationships element
+			Element relationshipsElement = document.createElement(ELEMENT_RELATIONSHIPS);
+			resourceElement.appendChild(relationshipsElement);
+
+			relationshipsElement.appendChild(createRelationshipElement(document, RELATIONSHIP_ALE63_ARTIFACTS, null));
+			relationshipsElement.appendChild(createRelationshipElement(document, RELATIONSHIP_GEP63_PROVIDES, null));
+			String targetUri = (bsrUriOrganization == null) ? null : bsrUriOrganization;
+			relationshipsElement.appendChild(
+					createRelationshipElement(document, RELATIONSHIP_ALE63_OWNING_ORGANIZATION, targetUri));
+			relationshipsElement
+					.appendChild(createRelationshipElement(document, RELATIONSHIP_GEP63_PROVIDED_REST_SERVICES, null));
+			relationshipsElement.appendChild(createRelationshipElement(document, RELATIONSHIP_GEP63_CONSUMES, null));
+			relationshipsElement.appendChild(createRelationshipElement(document, RELATIONSHIP_ALE63_DEPENDENCY, null));
+			relationshipsElement
+					.appendChild(createRelationshipElement(document, RELATIONSHIP_GEP63_PROVIDED_WEB_SERVICES, null));
+			relationshipsElement
+					.appendChild(createRelationshipElement(document, RELATIONSHIP_GEP63_PROVIDED_SCA_MODULES, null));
+			relationshipsElement.appendChild(
+					createRelationshipElement(document, RELATIONSHIP_GEP63_INTERFACE_SPECIFICATIONS, null));
+
+			// Classifications element
+			Element classificationsElement = document.createElement(ELEMENT_CLASSIFICATIONS);
+			resourceElement.appendChild(classificationsElement);
+			classificationsElement.appendChild(classificationsElement
+					.appendChild(createClassificationElement(document, "http://isp/#CANALE")));
+			
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer1 = tf.newTransformer();
+			transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			StringWriter writer = new StringWriter();
+			transformer1.transform(new DOMSource(document), new StreamResult(writer));
+			output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			output = null;
+		}
+
+		return output;
+	}
 	public String createBusinessServiceXMLData(TWList data, String serviceVersionBsrUri, String organizationBsrUri) {
 
 		String output = null;
